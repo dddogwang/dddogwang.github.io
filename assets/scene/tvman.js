@@ -63,6 +63,80 @@ function add(parent,mesh,x,y,z,rx=0,ry=0,rz=0,sx,sy,sz){
   if(sx!==undefined) mesh.scale.set(sx,sy,sz);
   mesh.castShadow=true; mesh.receiveShadow=true; parent.add(mesh); return mesh;
 }
+function flatDetail(parent,x,y,z,rz,w,h,baseM,edgeM,stitchM){
+  const g=new THREE.Group();
+  g.position.set(x,y,z); g.rotation.z=rz; parent.add(g);
+  add(g, rbox(w,h,0.008,0.005,baseM), 0,0,0, 0.08,0,0);
+  add(g, rbox(w*0.86,h*0.92,0.004,0.003,edgeM), 0,0,0.005, 0.08,0,0);
+  const n=Math.max(3, Math.floor(h/0.1));
+  for(let i=0;i<n;i++){
+    const yy=-h*0.42 + i*(h*0.84/(n-1));
+    add(g, box(0.006,0.022,0.004,stitchM), -w*0.36, yy, 0.008);
+    add(g, box(0.006,0.022,0.004,stitchM),  w*0.36, yy, 0.008);
+  }
+  return g;
+}
+function strapDetail(parent,x,y,z,rz,w,h,baseM,edgeM,rivetM){
+  const g=new THREE.Group();
+  g.position.set(x,y,z); g.rotation.z=rz; parent.add(g);
+  add(g, rbox(w,h,0.026,0.014,baseM), 0,0,0, 0.04,0,0);
+  add(g, rbox(w*0.18,h*0.94,0.008,0.004,edgeM), -w*0.31,0,0.015, 0.04,0,0);
+  add(g, rbox(w*0.18,h*0.94,0.008,0.004,edgeM),  w*0.31,0,0.015, 0.04,0,0);
+  for(const yy of [-h*0.36, h*0.36]) add(g, cyl(w*0.14,w*0.14,0.014,rivetM,12), 0,yy,0.024, Math.PI/2,0,0);
+  return g;
+}
+const LEG_PROFILE=[
+  [0.0,-1.86],[0.13,-1.84],[0.18,-1.68],[0.22,-1.34],
+  [0.18,-0.98],[0.23,-0.58],[0.27,-0.16],[0.22,0.08]
+];
+function legRadiusAt(y){
+  for(let i=0;i<LEG_PROFILE.length-1;i++){
+    const [r0,y0]=LEG_PROFILE[i], [r1,y1]=LEG_PROFILE[i+1];
+    if(y>=Math.min(y0,y1) && y<=Math.max(y0,y1)){
+      const t=(y-y0)/(y1-y0);
+      return r0+(r1-r0)*t;
+    }
+  }
+  return 0.2;
+}
+function legFrontZ(x,y,offset=0.003){
+  const r=legRadiusAt(y);
+  return Math.sqrt(Math.max(0.001, r*r-x*x)) + offset;
+}
+function legSurfaceRy(x,y){
+  return Math.atan2(x, legFrontZ(x,y,0));
+}
+function legSeam(parent,s,m){
+  const g=new THREE.Group(); parent.add(g);
+  for(let k=0;k<11;k++){
+    const t=k/10, y=-1.34+t*1.16;
+    const curve=Math.sin((t-0.12)*Math.PI)*0.018;
+    const x=s*(0.162-0.018*t+curve);
+    add(g, rbox(0.021,0.12,0.007,0.003,m), x,y,legFrontZ(x,y,0.005), 0.12,legSurfaceRy(x,y),s*(0.13-0.1*t));
+  }
+  return g;
+}
+function legPatch(parent,s,baseM,edgeM,stitchM){
+  const g=new THREE.Group();
+  parent.add(g);
+  const baseX=-s*0.075, rz=-s*0.08;
+  for(let k=0;k<4;k++){
+    const y=-0.745+k*0.078;
+    const ry=legSurfaceRy(baseX,y);
+    add(g, rbox(0.082,0.092,0.009,0.005,baseM), baseX,y,legFrontZ(baseX,y,0.005), 0.08,ry,rz);
+    add(g, rbox(0.068,0.064,0.005,0.003,edgeM), baseX,y,legFrontZ(baseX,y,0.011), 0.08,ry,rz);
+  }
+  for(const x of [-0.036,0.036]){
+    for(let k=0;k<4;k++){
+      const px=baseX+x, y=-0.757+k*0.082;
+      add(g, box(0.006,0.024,0.005,stitchM), px, y, legFrontZ(px,y,0.014), 0.08,legSurfaceRy(px,y),rz);
+    }
+  }
+  for(const y of [-0.787,-0.462]){
+    add(g, box(0.056,0.014,0.005,stitchM), baseX,y,legFrontZ(baseX,y,0.014), 0.08,legSurfaceRy(baseX,y),rz);
+  }
+  return g;
+}
 const _up=new THREE.Vector3(0,1,0);
 // tapered cloth segment A->B. No spherical caps, so sleeves and legs keep a loose fabric edge.
 function clothSeg(parent,A,B,rA,rB,m,segCount=18){
@@ -126,7 +200,7 @@ function buildTVMan(){
         Mshoe=mat(COL.shoe), MshoeWh=mat(COL.shoeWh), Mskin=mat(COL.skin),
         MpoleA=mat(COL.poleA), MpoleB=mat(COL.poleB), Mcord=mat(COL.cord),
         Mlogo=mat(COL.hoodDk), Mleather=mat(0x6d3d22), MleatherDk=mat(0x3d2418),
-        Mwhite=mat(0xf1ead4);
+        Mwhite=mat(0xf1ead4), Mstitch=mat(0xd7c59b), Mrivet=mat(0xc6ab57,{metalness:0.75,roughness:0.35});
 
   /* ---- loose green trousers: uneven cloth tubes, brown patches, narrow cuffs ---- */
   for(const s of [-1,1]){
@@ -139,8 +213,8 @@ function buildTVMan(){
               .map(p=>new THREE.Vector2(p[0],p[1]));
     const lm=new THREE.Mesh(new THREE.LatheGeometry(pts,30), Mpants);
     lm.castShadow=lm.receiveShadow=true; leg.add(lm);
-    add(leg, rbox(0.055,1.18,0.04,0.012,MpantsDk), s*0.16, -0.78, 0.3, 0.04,0,s*0.08);
-    add(leg, rbox(0.1,0.36,0.05,0.012,MleatherDk), -s*0.085, -0.62, 0.32, 0.04,0,-s*0.08);
+    legSeam(leg, s, MpantsDk);
+    legPatch(leg, s, MleatherDk, Mleather, Mstitch);
 
     const ax=s*0.48;
     add(g, cyl(0.17,0.2,0.14,MpantsDk,20), ax, 0.74, 0.05);
@@ -156,7 +230,10 @@ function buildTVMan(){
   // hips / waist
   add(g, rbox(0.86,0.34,0.68,0.08,MleatherDk), 0, 2.44, 0.02);
   add(g, rbox(0.7,0.16,0.72,0.04,mat(0xb1a690)), 0, 2.58, 0.04);
-  for(let k=0;k<8;k++) add(g, box(0.06,0.18,0.08,Mleather), -0.28+k*0.08, 2.58, 0.41);
+  for(let k=0;k<8;k++){
+    add(g, box(0.052,0.16,0.045,Mleather), -0.28+k*0.08, 2.575, 0.385);
+    add(g, box(0.04,0.018,0.018,Mstitch), -0.28+k*0.08, 2.66, 0.412);
+  }
 
   /* ---- loose yellow hoodie on a slim body: soft fabric without a bulky torso ---- */
   lathe(g, [
@@ -167,14 +244,18 @@ function buildTVMan(){
   add(g, rbox(1.0,0.16,0.3,0.06,Mhood), 0, 3.78, 0.0);
   add(g, rbox(0.52,0.24,0.08,0.04,MhoodDk), 0, 3.0, 0.5);
   add(g, rbox(0.38,0.2,0.1,0.04,Mhood), 0, 2.9, 0.56);
+  add(g, rbox(0.34,0.05,0.018,0.012,MhoodDk), 0, 2.99, 0.615);
+  add(g, rbox(0.34,0.018,0.012,0.004,Mstitch), 0, 2.84, 0.618);
+  for(const x of [-0.18,0.18]) add(g, box(0.018,0.14,0.01,Mstitch), x, 2.9, 0.62);
+  add(g, cyl(0.018,0.018,0.014,Mrivet,12), 0, 2.9, 0.63, Math.PI/2,0,0);
   for(const s of [-1,1]){
     add(g, cyl(0.018,0.018,0.82,Mwhite,8), s*0.09, 3.58, 0.51, 0.2,0,s*0.22);
     add(g, sph(0.034,Mwhite), s*0.18, 3.18, 0.53);
   }
-  add(g, rbox(0.13,1.32,0.06,0.025,Mleather), -0.27, 3.18, 0.4, 0.02,0,-0.42);
-  add(g, rbox(0.1,0.78,0.06,0.02,MleatherDk), 0.3, 2.88, 0.4, 0.02,0,0.16);
-  add(g, rbox(0.3,0.24,0.09,0.04,Mleather), -0.36, 2.45, 0.22, 0.1,0,-0.14);
-  add(g, rbox(0.22,0.2,0.09,0.035,MleatherDk), 0.34, 2.5, 0.21, 0.1,0,0.1);
+  strapDetail(g, -0.27, 3.18, 0.43, -0.42, 0.12,1.28, Mleather, MleatherDk, Mrivet);
+  strapDetail(g, 0.3, 2.88, 0.415, 0.16, 0.09,0.72, MleatherDk, Mleather, Mrivet);
+  flatDetail(g, -0.36, 2.45, 0.215, -0.14, 0.27,0.22, Mleather, MleatherDk, Mstitch);
+  flatDetail(g, 0.34, 2.5, 0.205, 0.1, 0.2,0.18, MleatherDk, Mleather, Mstitch);
   add(g, cyl(0.22,0.2,0.08,MhoodDk,28), 0, 3.88, 0.0, 0.1,0,0);
 
   /* ---- relaxed sleeves: dropped and baggy, not akimbo/capsule ---- */
@@ -218,19 +299,15 @@ function buildTVMan(){
   katana.position.set(-0.06, 2.78, -0.42);
   katana.rotation.set(0.06, 0, -0.025);
   add(katana, cyl(0.075,0.075,2.58,Msaya,18), -1.42,0,0, 0,0,Math.PI/2);
-  add(katana, cyl(0.05,0.075,0.28,Msteel,18), -2.86,0,0, 0,0,Math.PI/2);
-  for(let i=0;i<10;i++){
-    add(katana, box(0.08,0.18,0.12,MsayaDk), -2.58+i*0.23, 0.0, 0.06, 0,0,0.7);
-  }
+  add(katana, cyl(0.025,0.075,0.48,Msaya,18), -2.95,0,0, 0,0,Math.PI/2);
+  add(katana, cyl(0.078,0.078,0.07,MsayaDk,18), -2.69,0,0, 0,0,Math.PI/2);
+  for(let i=0;i<4;i++) add(katana, cyl(0.083,0.083,0.055,MsayaDk,18), -2.28+i*0.46,0,0, 0,0,Math.PI/2);
   add(katana, cyl(0.08,0.08,0.64,Msteel,18), 0.06,0,0, 0,0,Math.PI/2);
   add(katana, cyl(0.2,0.2,0.08,Mfit,4), 0.44,0,0, 0,0,Math.PI/2, 1.0,1.0,0.62);
   add(katana, cyl(0.16,0.16,0.06,Mtsuba,4), 0.48,0,0, 0,0,Math.PI/2, 1.0,1.0,0.62);
   add(katana, cyl(0.07,0.075,1.02,Mtsuka,16), 1.06,0,0, 0,0,Math.PI/2);
-  for(let i=0;i<8;i++) add(katana, box(0.07,0.16,0.14,Mwrap), 0.62+i*0.12,0,0.04, Math.PI/4,0,0);
+  for(let i=0;i<5;i++) add(katana, cyl(0.078,0.078,0.045,Mwrap,16), 0.68+i*0.18,0,0, 0,0,Math.PI/2);
   add(katana, cyl(0.06,0.05,0.22,Msteel,12), 1.68,0,0, 0,0,Math.PI/2);
-  add(katana, cyl(0.016,0.016,0.38,MpoleA,6), -2.78,-0.22,0.02, 0,0,0.1);
-  add(katana, cyl(0.014,0.014,0.44,MpoleA,6), 0.52,-0.26,0.02, 0,0,-0.08);
-  for(let k=0;k<3;k++) add(katana, cyl(0.01,0.01,0.34,MpoleA,5), 0.62+k*0.08,-0.34,0.02, 0,0,0.2-k*0.12);
   g.add(katana);
 
   return g;
