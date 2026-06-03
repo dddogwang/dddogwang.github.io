@@ -264,12 +264,25 @@ main{position:relative;z-index:20;background:var(--bg)}
 
 @media(max-width:820px){
   .nav .menu{display:none}
-  .hero-copy{left:var(--gut);right:var(--gut);top:auto;bottom:120px;
+  .hero{height:100svh;min-height:720px}
+  .stage{align-items:flex-start;height:48%;padding-top:76px}
+  .figure{width:clamp(220px,58vw,310px);opacity:.82;transform:translateX(4%)}
+  .hero-copy{left:var(--gut);right:var(--gut);top:auto;bottom:64px;
     transform:none;max-width:none}
-  .hero-copy h1{font-size:24px}
-  .figure{width:74vw;opacity:.85;transform:none}
-  .stage{align-items:flex-start;padding-top:90px}
+  .hero-copy .intro{font-size:15px;line-height:1.45;margin-bottom:14px;
+    max-width:31ch}
+  .hero-copy h1{font-size:clamp(24px,7vw,32px);line-height:1.08;
+    margin-bottom:20px;max-width:14ch}
+  .actions{gap:8px;max-width:330px}
+  .chip{font-size:13px;min-height:42px;padding:9px 15px}
+  .writeus{font-size:13px;line-height:1.35;gap:6px}
   .sec-head .meta{text-align:left}
+}
+@media(max-width:480px){
+  .hero{min-height:740px}
+  .stage{height:45%;padding-top:74px}
+  .figure{width:clamp(196px,54vw,238px);opacity:.78;transform:translateX(5%)}
+  .hero-copy{bottom:68px}
 }
 /* keyboard focus ring */
 a:focus-visible,button:focus-visible{outline:2px solid var(--accent);
