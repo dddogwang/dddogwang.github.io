@@ -31,13 +31,16 @@ const rim = new THREE.DirectionalLight(0xbfe9ff, 1.05); rim.position.set(6,3,-5)
 const rim2 = new THREE.DirectionalLight(0xffe2c0, 0.6); rim2.position.set(-6,2,-4); scene.add(rim2);
 const fill = new THREE.DirectionalLight(0xffffff, 0.45); fill.position.set(4,1,7); scene.add(fill);
 
-const root = new THREE.Group(); scene.add(root);
+const root = new THREE.Group();
+root.position.x = 0.42;
+scene.add(root);
 let screenMat=null, screenLight=null;
 
 /* ============================================================
-   Smooth low-poly "TV-man" (original asset, capsule-based body)
+   Anime TV-man figure, matched to the flat reference silhouette.
+   The body is built from tapered cloth forms, not capsule limbs.
    ============================================================ */
-// smooth-shaded material (no flatShading → rounded look)
+// smooth-shaded material
 function mat(color, extra={}){
   return new THREE.MeshStandardMaterial({color, roughness:0.82, metalness:0.0, ...extra});
 }
@@ -46,12 +49,11 @@ const toonGrad = (()=>{ const t=new THREE.DataTexture(new Uint8Array([78,140,200
   t.minFilter=t.magFilter=THREE.NearestFilter; t.needsUpdate=true; return t; })();
 function tmat(color){ return new THREE.MeshToonMaterial({color, gradientMap:toonGrad}); }
 const COL = {
-  tv:0xd3d6da, tvDark:0x6c7176, hood:0xf0b81e, hoodDk:0xcc9a17,
+  tv:0xd3d6da, tvDark:0x6c7176, hood:0xf2a51c, hoodDk:0xc98212,
   pants:0x4b5230, pantsDk:0x39431f, sock:0xedd64e, sockB:0xf4eed6,
   shoe:0x3a3e84, shoeWh:0xefe9dc, skin:0xdcae8e, poleA:0xdcc64e,
   poleB:0x2b2b2b, cord:0x1e1e1e, dirt:0x6e4a2a, soil:0x57411f, grass:0x5f8d3d
 };
-function cap(r,len,m){ return new THREE.Mesh(new THREE.CapsuleGeometry(r,len,10,20), m); }
 function sph(r,m){ return new THREE.Mesh(new THREE.SphereGeometry(r,28,20), m); }
 function cyl(rt,rb,h,m,seg=24){ return new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg), m); }
 function rbox(w,h,d,r,m){ return new THREE.Mesh(new RoundedBoxGeometry(w,h,d,4,r), m); }
@@ -61,27 +63,53 @@ function add(parent,mesh,x,y,z,rx=0,ry=0,rz=0,sx,sy,sz){
   if(sx!==undefined) mesh.scale.set(sx,sy,sz);
   mesh.castShadow=true; mesh.receiveShadow=true; parent.add(mesh); return mesh;
 }
-// capsule limb spanning two points A→B (robust joints, no manual rotations)
 const _up=new THREE.Vector3(0,1,0);
-function limb(parent,A,B,r,m){
+// tapered cloth segment A->B. No spherical caps, so sleeves and legs keep a loose fabric edge.
+function clothSeg(parent,A,B,rA,rB,m,segCount=18){
   const a=new THREE.Vector3(A[0],A[1],A[2]), b=new THREE.Vector3(B[0],B[1],B[2]);
   const dir=new THREE.Vector3().subVectors(b,a), len=dir.length();
-  const mesh=new THREE.Mesh(new THREE.CapsuleGeometry(r, Math.max(0.04,len-2*r), 10, 18), m);
-  mesh.position.copy(a).add(b).multiplyScalar(0.5);
-  mesh.quaternion.setFromUnitVectors(_up, dir.normalize());
-  mesh.castShadow=mesh.receiveShadow=true; parent.add(mesh); return mesh;
-}
-// tapered limb segment A→B (radius rA at A, rB at B) + rounded joints
-function seg(parent,A,B,rA,rB,m){
-  const a=new THREE.Vector3(A[0],A[1],A[2]), b=new THREE.Vector3(B[0],B[1],B[2]);
-  const dir=new THREE.Vector3().subVectors(b,a), len=dir.length();
-  const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rB,rA,len,22,1,false), m);
+  const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rB,rA,len,segCount,1,false), m);
   mesh.position.copy(a).add(b).multiplyScalar(0.5);
   mesh.quaternion.setFromUnitVectors(_up, dir.normalize());
   mesh.castShadow=mesh.receiveShadow=true; parent.add(mesh);
-  const j=new THREE.Mesh(new THREE.SphereGeometry(rA,18,14), m);  // joint cap at A
-  j.position.copy(a); j.castShadow=j.receiveShadow=true; parent.add(j);
   return mesh;
+}
+function clothTube(parent, points, radii, m, radial=22){
+  const rings=points.map(p=>new THREE.Vector3(p[0],p[1],p[2]));
+  const verts=[], norms=[], idx=[];
+  for(let i=0;i<rings.length;i++){
+    const p=rings[i];
+    const prev=rings[Math.max(0,i-1)], next=rings[Math.min(rings.length-1,i+1)];
+    const tangent=new THREE.Vector3().subVectors(next,prev).normalize();
+    const side=new THREE.Vector3().crossVectors(tangent, new THREE.Vector3(0,0,1));
+    if(side.lengthSq()<0.001) side.crossVectors(tangent, new THREE.Vector3(1,0,0));
+    side.normalize();
+    const forward=new THREE.Vector3().crossVectors(side,tangent).normalize();
+    for(let j=0;j<radial;j++){
+      const a=(j/radial)*Math.PI*2;
+      const rx=radii[i][0], rz=radii[i][1];
+      const n=new THREE.Vector3()
+        .addScaledVector(side, Math.cos(a)/rx)
+        .addScaledVector(forward, Math.sin(a)/rz)
+        .normalize();
+      const v=p.clone()
+        .addScaledVector(side, Math.cos(a)*rx)
+        .addScaledVector(forward, Math.sin(a)*rz);
+      verts.push(v.x,v.y,v.z); norms.push(n.x,n.y,n.z);
+    }
+  }
+  for(let i=0;i<rings.length-1;i++){
+    for(let j=0;j<radial;j++){
+      const a=i*radial+j, b=i*radial+(j+1)%radial, c=(i+1)*radial+j, d=(i+1)*radial+(j+1)%radial;
+      idx.push(a,c,b,b,c,d);
+    }
+  }
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(verts,3));
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(norms,3));
+  geo.setIndex(idx);
+  const mesh=new THREE.Mesh(geo,m);
+  mesh.castShadow=mesh.receiveShadow=true; parent.add(mesh); return mesh;
 }
 // surface-of-revolution from a (radius,height) profile → smooth organic forms
 function lathe(parent, profile, m, x=0,y=0,z=0, seg=36){
@@ -90,7 +118,6 @@ function lathe(parent, profile, m, x=0,y=0,z=0, seg=36){
   const mesh=new THREE.Mesh(geo,m); mesh.position.set(x,y,z);
   mesh.castShadow=mesh.receiveShadow=true; parent.add(mesh); return mesh;
 }
-
 function buildTVMan(){
   const g = new THREE.Group();
   const Mtv=mat(COL.tv,{roughness:0.45}), MtvDk=mat(COL.tvDark,{roughness:0.5}),
@@ -98,65 +125,75 @@ function buildTVMan(){
         MpantsDk=mat(COL.pantsDk), Msock=mat(COL.sock), MsockB=mat(COL.sockB),
         Mshoe=mat(COL.shoe), MshoeWh=mat(COL.shoeWh), Mskin=mat(COL.skin),
         MpoleA=mat(COL.poleA), MpoleB=mat(COL.poleB), Mcord=mat(COL.cord),
-        Mlogo=mat(COL.hoodDk);
+        Mlogo=mat(COL.hoodDk), Mleather=mat(0x6d3d22), MleatherDk=mat(0x3d2418),
+        Mwhite=mat(0xf1ead4);
 
-  /* ---- legs: one smooth tapered shape per leg (thigh→calf→ankle, no pinch), spread wide ---- */
+  /* ---- loose green trousers: uneven cloth tubes, brown patches, narrow cuffs ---- */
   for(const s of [-1,1]){
     const leg=new THREE.Group();
-    leg.position.set(s*0.24, 2.5, 0.04);
-    leg.rotation.z = s*0.2;                                        // splay outward (wide stance)
+    leg.position.set(s*0.21, 2.46, 0.02);
+    leg.rotation.z = s*0.12;
     g.add(leg);
-    const pts=[[0.0,-2.32],[0.155,-2.29],[0.185,-2.02],[0.218,-1.55],
-               [0.2,-1.05],[0.218,-0.6],[0.252,-0.14],[0.24,0.0],[0.0,0.04]]
+    const pts=[[0.0,-1.86],[0.13,-1.84],[0.18,-1.68],[0.22,-1.34],
+               [0.18,-0.98],[0.23,-0.58],[0.27,-0.16],[0.22,0.08],[0.0,0.08]]
               .map(p=>new THREE.Vector2(p[0],p[1]));
     const lm=new THREE.Mesh(new THREE.LatheGeometry(pts,30), Mpants);
     lm.castShadow=lm.receiveShadow=true; leg.add(lm);
-    // ankle cuff + chunky streetwear sneaker (flat on the ground, world space)
-    add(g, cyl(0.19,0.21,0.14,MpantsDk,20), s*0.68, 0.33, 0.04);
-    add(g, sph(0.23,Mshoe), s*0.68, 0.3, 0.04, 0,s*0.22,0, 1.0,0.9,1.05);     // padded ankle collar
-    add(g, sph(0.31,Mshoe), s*0.68, 0.21, 0.14, 0,s*0.22,0, 0.85,0.85,1.3);   // body
-    add(g, sph(0.2,MshoeWh), s*0.73, 0.22, 0.5, 0,s*0.22,0, 1.05,0.85,1.0);   // toe cap
-    add(g, rbox(0.5,0.2,0.98,0.09,MshoeWh), s*0.68, 0.08, 0.16, 0,s*0.22,0);  // thick white sole
-    add(g, box(0.52,0.05,1.0,Mshoe), s*0.68, 0.16, 0.16, 0,s*0.22,0);         // sole accent stripe
-    add(g, rbox(0.18,0.24,0.24,0.06,MshoeWh), s*0.66, 0.3, 0.22, 0.35,s*0.22,0); // tongue
-    for(let k=0;k<3;k++) add(g, cyl(0.02,0.02,0.24,Mcord,8), s*0.68, 0.32-k*0.07, 0.26+k*0.02, 0,0,Math.PI/2); // laces
+    add(leg, rbox(0.055,1.18,0.04,0.012,MpantsDk), s*0.16, -0.78, 0.3, 0.04,0,s*0.08);
+    add(leg, rbox(0.1,0.36,0.05,0.012,MleatherDk), -s*0.085, -0.62, 0.32, 0.04,0,-s*0.08);
+
+    const ax=s*0.48;
+    add(g, cyl(0.17,0.2,0.14,MpantsDk,20), ax, 0.74, 0.05);
+    add(g, cyl(0.1,0.125,0.56,Mwhite,18), ax, 0.48, 0.1);
+    for(let k=0;k<6;k++) add(g, cyl(0.104,0.104,0.022,Mcord,18), ax, 0.69-k*0.075, 0.1);
+    add(g, rbox(0.42,0.2,0.78,0.06,Mshoe), ax, 0.29, 0.5, 0,s*0.16,0);
+    add(g, rbox(0.34,0.12,0.34,0.04,Mshoe), ax, 0.38, 0.74, 0.05,s*0.16,0);
+    add(g, rbox(0.46,0.1,0.82,0.04,MshoeWh), ax, 0.2, 0.5, 0,s*0.16,0);
+    add(g, rbox(0.24,0.1,0.2,0.035,MshoeWh), ax+s*0.02, 0.33, 0.92, 0,s*0.16,0);
+    add(g, rbox(0.12,0.18,0.22,0.035,MshoeWh), ax, 0.39, 0.5, 0.4,s*0.08,0);
+    for(let k=0;k<3;k++) add(g, cyl(0.012,0.012,0.22,Mwhite,8), ax, 0.37-k*0.04, 0.58, 0,0,Math.PI/2);
   }
   // hips / waist
-  add(g, sph(0.5,Mpants), 0, 2.48, 0, 0,0,0, 1.16,0.58,0.82);
+  add(g, rbox(0.86,0.34,0.68,0.08,MleatherDk), 0, 2.44, 0.02);
+  add(g, rbox(0.7,0.16,0.72,0.04,mat(0xb1a690)), 0, 2.58, 0.04);
+  for(let k=0;k<8;k++) add(g, box(0.06,0.18,0.08,Mleather), -0.28+k*0.08, 2.58, 0.41);
 
-  /* ---- hoodie torso (athletic V-taper: broad shoulders, slim waist, no belly) ---- */
+  /* ---- loose yellow hoodie on a slim body: soft fabric without a bulky torso ---- */
   lathe(g, [
-    [0.0,2.5],[0.4,2.5],[0.43,2.66],[0.4,2.92],[0.43,3.2],
-    [0.51,3.48],[0.58,3.66],[0.55,3.8],[0.36,3.94],[0.2,4.02],[0.0,4.04]
+    [0.0,2.48],[0.32,2.48],[0.39,2.66],[0.36,2.94],[0.38,3.2],
+    [0.43,3.48],[0.48,3.68],[0.45,3.86],[0.28,3.98],[0.14,4.08],[0.0,4.1]
   ], Mhood);
-  add(g, cyl(0.44,0.42,0.26,MhoodDk,32), 0, 2.6, 0);            // ribbed hem (snug)
-  add(g, sph(0.6,Mhood), 0, 3.68, 0.02, 0,0,0, 1.2,0.58,0.78);  // broad shoulder yoke
-  for(const s of [-1,1]) add(g, sph(0.24,Mhood), s*0.56,3.62,0.0, 0,0,0, 1.0,0.95,0.95); // deltoid caps
-  // centre zip + collar
-  add(g, cyl(0.02,0.02,1.1,MtvDk,8), 0, 3.05, 0.4, 0.06,0,0);
-  add(g, cyl(0.42,0.4,0.12,MhoodDk,28), 0, 3.86, 0.0, 0.1,0,0);  // ribbed collar
-  // drawstrings
-  for(const s of [-1,1]){ add(g, cyl(0.022,0.022,0.42,MtvDk,8), s*0.12, 3.5, 0.44);
-    add(g, sph(0.04,MtvDk), s*0.12, 3.28, 0.44); }
-
-  /* ---- arms: hands on the waist (akimbo) — tapered, natural flow ---- */
+  add(g, cyl(0.34,0.39,0.18,MhoodDk,32), 0, 2.52, 0);
+  add(g, rbox(1.08,0.2,0.4,0.075,Mhood), 0, 3.56, 0.0);
+  add(g, rbox(0.52,0.24,0.08,0.04,MhoodDk), 0, 3.0, 0.5);
+  add(g, rbox(0.38,0.2,0.1,0.04,Mhood), 0, 2.9, 0.56);
   for(const s of [-1,1]){
-    const shoulder=[s*0.52, 3.64, 0.02];
-    const elbow   =[s*0.84, 3.02,-0.06];                // elbow flared out
-    const wrist   =[s*0.52, 2.66, 0.16];                // forearm end, near the hip
-    const hand    =[s*0.42, 2.58, 0.2];                 // fist on the hip
-    seg(g, shoulder, elbow, 0.18, 0.13, Mhood);         // upper arm (thick→thin)
-    seg(g, elbow,    wrist, 0.135,0.105, Mhood);        // forearm
-    add(g, cyl(0.115,0.12,0.12,MhoodDk,16), wrist[0],wrist[1],wrist[2], 0.9,0,s*0.5); // ribbed sleeve cuff
-    // fist resting on the hip
-    add(g, rbox(0.19,0.17,0.2,0.06,Mskin), hand[0],hand[1],hand[2], 0,s*0.2,0);
-    for(let k=0;k<4;k++) add(g, sph(0.026,Mskin), hand[0]-s*0.06+k*s*0.04, hand[1]+0.06, hand[2]+0.06, 0,0,0); // knuckles
-    add(g, sph(0.04,Mskin), hand[0]+s*0.07, hand[1]-0.02, hand[2]+0.02); // thumb
+    add(g, cyl(0.018,0.018,0.82,Mwhite,8), s*0.09, 3.58, 0.51, 0.2,0,s*0.22);
+    add(g, sph(0.034,Mwhite), s*0.18, 3.18, 0.53);
+  }
+  add(g, rbox(0.13,1.32,0.08,0.025,Mleather), -0.27, 3.18, 0.56, 0.02,0,-0.42);
+  add(g, rbox(0.1,0.78,0.08,0.02,MleatherDk), 0.3, 2.88, 0.53, 0.02,0,0.16);
+  add(g, rbox(0.3,0.24,0.12,0.04,Mleather), -0.36, 2.45, 0.3, 0.1,0,-0.14);
+  add(g, rbox(0.22,0.2,0.12,0.035,MleatherDk), 0.34, 2.5, 0.28, 0.1,0,0.1);
+  add(g, cyl(0.22,0.2,0.08,MhoodDk,28), 0, 3.88, 0.0, 0.1,0,0);
+
+  /* ---- relaxed sleeves: dropped and baggy, not akimbo/capsule ---- */
+  for(const s of [-1,1]){
+    const wrist=[s*0.54, 2.56, 0.13];
+    add(g, rbox(0.28,0.14,0.26,0.07,Mhood), s*0.43, 3.49, 0.02, 0,0,s*0.03);
+    clothTube(g,
+      [[s*0.34,3.55,0.0],[s*0.48,3.42,0.02],[s*0.56,3.08,0.04],[s*0.54,2.76,0.1],[wrist[0],wrist[1],wrist[2]]],
+      [[0.15,0.2],[0.16,0.17],[0.14,0.15],[0.12,0.13],[0.09,0.1]],
+      Mhood, 24);
+    add(g, rbox(0.14,0.18,0.15,0.04,MhoodDk), wrist[0], wrist[1]-0.02, wrist[2]+0.02, 0.72,0,s*0.1);
+    add(g, rbox(0.1,0.13,0.14,Mskin), wrist[0]-s*0.01,wrist[1]-0.08,wrist[2]+0.07, 0,s*0.16,s*0.06);
+    add(g, sph(0.032,Mskin), wrist[0]+s*0.04,wrist[1]-0.07,wrist[2]+0.08, 0,0,0, 0.7,1.0,0.7);
   }
 
-  /* ---- neck (flowing taper: trapezius → throat) + TV head ---- */
-  lathe(g, [[0.0,3.82],[0.34,3.84],[0.22,3.96],[0.17,4.12],[0.18,4.3],[0.0,4.32]], Mskin, 0,0,0, 20);
-  const head = new THREE.Group(); head.position.set(0,4.74,0.04);
+  /* ---- slim visible neck, separated from hoodie and TV casing ---- */
+  lathe(g, [[0.0,3.86],[0.16,3.88],[0.13,4.02],[0.115,4.2],[0.12,4.42],[0.0,4.44]], Mskin, 0,0,0, 20);
+  add(g, cyl(0.18,0.2,0.1,MhoodDk,24), 0, 3.9, 0.0, 0.1,0,0);
+  const head = new THREE.Group(); head.position.set(0,4.84,0.04);
   head.rotation.set(0.13,0,-0.11); head.scale.setScalar(0.9); g.add(head);
   add(head, rbox(1.5,1.28,1.3,0.1,Mtv), 0,0,0);                   // casing
   add(head, rbox(1.5,0.2,1.32,0.06,MtvDk), 0,-0.66,0);           // base
@@ -168,44 +205,31 @@ function buildTVMan(){
   for(const s of [-1,1]){
     add(head, sph(0.06,MtvDk), s*0.18,0.66,-0.1);                 // base joint
     add(head, cyl(0.018,0.026,0.62,Mtv,8), s*0.42,0.92,-0.16, 0,0,s*0.5); // rod
-    add(head, sph(0.04,MtvDk), s*0.64,1.18,-0.22);               // tip ball
   }
 
-  /* ---- one sleek horizontal katana, held behind the arms ---- */
+  /* ---- reference-style horizontal katana across the back ---- */
   const Msteel=mat(0xc9cfd7,{metalness:0.92,roughness:0.18,envMapIntensity:1.6}),
-        Medge =mat(0xeef4fb,{metalness:0.6, roughness:0.1, envMapIntensity:1.3}),
-        Mtsuka=mat(0x14161d), Mwrap=mat(0x0c0e12),
+        Mtsuka=mat(0x14161d), Mwrap=mat(0x8e1d1d),
         Mtsuba=mat(0x222831,{metalness:0.85,roughness:0.28,envMapIntensity:1.4}),
-        Mfit  =mat(0xbf962e,{metalness:0.85,roughness:0.24,envMapIntensity:1.5});
+        Mfit  =mat(0xbf962e,{metalness:0.85,roughness:0.24,envMapIntensity:1.5}),
+        Msaya =mat(0xd9c44d), MsayaDk=mat(0x303122);
   const katana=new THREE.Group();
-  katana.position.set(-0.5, 3.0, -0.2);
-  katana.rotation.set(0, 0, 0.035);                            // a touch of swagger
-  // blade: extruded silhouette with a pronounced curve + pointed kissaki
-  const bs=new THREE.Shape();
-  bs.moveTo(0,0.078);
-  bs.quadraticCurveTo(1.7,0.135, 2.85,0.12);                  // curved spine (sori)
-  bs.quadraticCurveTo(3.3,0.105, 3.55,0.0);                   // tip
-  bs.quadraticCurveTo(3.1,-0.02, 2.7,-0.045);
-  bs.quadraticCurveTo(1.4,0.02, 0,-0.058);                    // curved edge
-  bs.lineTo(0,0.078);
-  const bgeo=new THREE.ExtrudeGeometry(bs,{depth:0.03,bevelEnabled:true,
-    bevelThickness:0.012,bevelSize:0.011,bevelSegments:1});
-  bgeo.translate(0,0,-0.015); bgeo.computeVertexNormals();
-  const blade=new THREE.Mesh(bgeo,Msteel); blade.position.set(0.05,0,0);
-  blade.castShadow=blade.receiveShadow=true; katana.add(blade);
-  // habaki + tsuba (guard) + brass rim
-  add(katana, cyl(0.075,0.08,0.1,Mfit,16), -0.04,0,0, 0,0,Math.PI/2);
-  add(katana, cyl(0.18,0.18,0.045,Mtsuba,4), -0.14,0,0, 0,0,Math.PI/2, 1,1,0.62); // squared tsuba
-  add(katana, cyl(0.2,0.2,0.02,Mfit,4),   -0.14,0,0, 0,0,Math.PI/2, 1,1,0.62);
-  // tsuka (handle) + diamond ito wrap
-  add(katana, cyl(0.058,0.064,0.74,Mtsuka,16), -0.55,0,0, 0,0,Math.PI/2);
-  for(let i=0;i<8;i++){ const x=-0.22-i*0.085;
-    add(katana, box(0.05,0.14,0.14,Mwrap), x,0,0, Math.PI/4,0,0); }
-  add(katana, box(0.06,0.07,0.07,Mfit), -0.55,0.0,0.07);      // menuki ornament
-  add(katana, cyl(0.07,0.06,0.07,Mfit,8), -0.95,0,0, 0,0,Math.PI/2); // kashira (pommel)
-  // sageo tassel hanging from the guard
-  add(katana, cyl(0.016,0.016,0.34,Mtsuka,6), -0.14,-0.2,0.04, 0,0,0.1);
-  add(katana, sph(0.03,Mfit), -0.16,-0.38,0.04);
+  katana.position.set(-0.06, 2.78, -0.42);
+  katana.rotation.set(0.06, 0, -0.025);
+  add(katana, cyl(0.075,0.075,2.58,Msaya,18), -1.42,0,0, 0,0,Math.PI/2);
+  add(katana, cyl(0.05,0.075,0.28,Msteel,18), -2.86,0,0, 0,0,Math.PI/2);
+  for(let i=0;i<10;i++){
+    add(katana, box(0.08,0.18,0.12,MsayaDk), -2.58+i*0.23, 0.0, 0.06, 0,0,0.7);
+  }
+  add(katana, cyl(0.08,0.08,0.64,Msteel,18), 0.06,0,0, 0,0,Math.PI/2);
+  add(katana, cyl(0.2,0.2,0.08,Mfit,4), 0.44,0,0, 0,0,Math.PI/2, 1.0,1.0,0.62);
+  add(katana, cyl(0.16,0.16,0.06,Mtsuba,4), 0.48,0,0, 0,0,Math.PI/2, 1.0,1.0,0.62);
+  add(katana, cyl(0.07,0.075,1.02,Mtsuka,16), 1.06,0,0, 0,0,Math.PI/2);
+  for(let i=0;i<8;i++) add(katana, box(0.07,0.16,0.14,Mwrap), 0.62+i*0.12,0,0.04, Math.PI/4,0,0);
+  add(katana, cyl(0.06,0.05,0.22,Msteel,12), 1.68,0,0, 0,0,Math.PI/2);
+  add(katana, cyl(0.016,0.016,0.38,MpoleA,6), -2.78,-0.22,0.02, 0,0,0.1);
+  add(katana, cyl(0.014,0.014,0.44,MpoleA,6), 0.52,-0.26,0.02, 0,0,-0.08);
+  for(let k=0;k<3;k++) add(katana, cyl(0.01,0.01,0.34,MpoleA,5), 0.62+k*0.08,-0.34,0.02, 0,0,0.2-k*0.12);
   g.add(katana);
 
   return g;
@@ -251,7 +275,7 @@ const tvman = buildTVMan();
 tvman.position.y = -0.1; root.add(tvman);
 
 /* ---- cartoon outlines (inverted-hull) for an anime-figure look ---- */
-const outlineMat = new THREE.MeshBasicMaterial({color:0x16140f, side:THREE.BackSide});
+const outlineMat = new THREE.MeshBasicMaterial({color:0x3f3c35, side:THREE.BackSide});
 function addOutlines(obj, grow){
   const meshes=[]; obj.traverse(o=>{ if(o.isMesh && o.material!==screenMat) meshes.push(o); });
   for(const m of meshes){
@@ -263,18 +287,17 @@ function addOutlines(obj, grow){
     o.renderOrder=-1; m.parent.add(o);
   }
 }
-addOutlines(tvman, 0.045);
+addOutlines(tvman, 0.012);
 
 /* ---- grass + dirt mound base ---- */
 const base = new THREE.Group(); root.add(base);
-add(base, sph(1.4,mat(COL.dirt)), 0,-0.5,0, 0,0,0, 1.0,0.55,1.0);  // rounded mound
-add(base, cyl(1.34,1.3,0.16,mat(COL.soil),28), 0,0.16,0);
-add(base, cyl(1.3,1.34,0.1,mat(COL.grass),28), 0,0.26,0);
+add(base, cyl(1.34,1.2,0.28,mat(COL.soil),36), 0,0.02,0);
+add(base, cyl(1.34,1.34,0.16,mat(COL.grass),36), 0,0.2,0);
 const Mgrass=mat(COL.grass), Mgrass2=mat(0x6fa048);
-for(let i=0;i<60;i++){
+for(let i=0;i<48;i++){
   const a=i/60*Math.PI*2, rr=0.42+(i*0.37%1)*0.82;
-  const blade=cyl(0.0,0.05,0.26+(i*0.13%1)*0.28, (i%2?Mgrass2:Mgrass),5);
-  add(base, blade, Math.cos(a)*rr, 0.34, Math.sin(a)*rr, (i*0.21%1-0.5)*0.5, a, (i*0.17%1-0.5)*0.5);
+  const blade=cyl(0.0,0.04,0.16+(i*0.13%1)*0.2, (i%2?Mgrass2:Mgrass),5);
+  add(base, blade, Math.cos(a)*rr, 0.32, Math.sin(a)*rr, (i*0.21%1-0.5)*0.45, a, (i*0.17%1-0.5)*0.45);
 }
 
 /* interaction: gentle sway + mouse parallax */
