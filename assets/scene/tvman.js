@@ -164,26 +164,27 @@ function buildTVMan(){
     [0.43,3.48],[0.48,3.68],[0.45,3.86],[0.28,3.98],[0.14,4.08],[0.0,4.1]
   ], Mhood);
   add(g, cyl(0.34,0.39,0.18,MhoodDk,32), 0, 2.52, 0);
-  add(g, rbox(1.08,0.2,0.4,0.075,Mhood), 0, 3.56, 0.0);
+  add(g, rbox(1.0,0.16,0.3,0.06,Mhood), 0, 3.78, 0.0);
   add(g, rbox(0.52,0.24,0.08,0.04,MhoodDk), 0, 3.0, 0.5);
   add(g, rbox(0.38,0.2,0.1,0.04,Mhood), 0, 2.9, 0.56);
   for(const s of [-1,1]){
     add(g, cyl(0.018,0.018,0.82,Mwhite,8), s*0.09, 3.58, 0.51, 0.2,0,s*0.22);
     add(g, sph(0.034,Mwhite), s*0.18, 3.18, 0.53);
   }
-  add(g, rbox(0.13,1.32,0.08,0.025,Mleather), -0.27, 3.18, 0.56, 0.02,0,-0.42);
-  add(g, rbox(0.1,0.78,0.08,0.02,MleatherDk), 0.3, 2.88, 0.53, 0.02,0,0.16);
-  add(g, rbox(0.3,0.24,0.12,0.04,Mleather), -0.36, 2.45, 0.3, 0.1,0,-0.14);
-  add(g, rbox(0.22,0.2,0.12,0.035,MleatherDk), 0.34, 2.5, 0.28, 0.1,0,0.1);
+  add(g, rbox(0.13,1.32,0.06,0.025,Mleather), -0.27, 3.18, 0.4, 0.02,0,-0.42);
+  add(g, rbox(0.1,0.78,0.06,0.02,MleatherDk), 0.3, 2.88, 0.4, 0.02,0,0.16);
+  add(g, rbox(0.3,0.24,0.09,0.04,Mleather), -0.36, 2.45, 0.22, 0.1,0,-0.14);
+  add(g, rbox(0.22,0.2,0.09,0.035,MleatherDk), 0.34, 2.5, 0.21, 0.1,0,0.1);
   add(g, cyl(0.22,0.2,0.08,MhoodDk,28), 0, 3.88, 0.0, 0.1,0,0);
 
   /* ---- relaxed sleeves: dropped and baggy, not akimbo/capsule ---- */
   for(const s of [-1,1]){
-    const wrist=[s*0.54, 2.56, 0.13];
-    add(g, rbox(0.28,0.14,0.26,0.07,Mhood), s*0.43, 3.49, 0.02, 0,0,s*0.03);
+    const wrist=[s*0.55, 2.56, 0.13];
+    // mild square shoulder: a short flat top, then a smooth taper down the sleeve
+    add(g, rbox(0.26,0.14,0.26,0.07,Mhood), s*0.48, 3.8, 0.02, 0,0,s*0.02);
     clothTube(g,
-      [[s*0.34,3.55,0.0],[s*0.48,3.42,0.02],[s*0.56,3.08,0.04],[s*0.54,2.76,0.1],[wrist[0],wrist[1],wrist[2]]],
-      [[0.15,0.2],[0.16,0.17],[0.14,0.15],[0.12,0.13],[0.09,0.1]],
+      [[s*0.3,3.82,0.0],[s*0.5,3.8,0.02],[s*0.57,3.5,0.04],[s*0.57,3.12,0.05],[s*0.55,2.78,0.1],[wrist[0],wrist[1],wrist[2]]],
+      [[0.15,0.19],[0.16,0.18],[0.15,0.16],[0.14,0.15],[0.12,0.13],[0.09,0.1]],
       Mhood, 24);
     add(g, rbox(0.14,0.18,0.15,0.04,MhoodDk), wrist[0], wrist[1]-0.02, wrist[2]+0.02, 0.72,0,s*0.1);
     add(g, rbox(0.1,0.13,0.14,Mskin), wrist[0]-s*0.01,wrist[1]-0.08,wrist[2]+0.07, 0,s*0.16,s*0.06);
@@ -272,7 +273,7 @@ function drawScreen(){
 }
 
 const tvman = buildTVMan();
-tvman.position.y = -0.1; root.add(tvman);
+tvman.position.y = 0.06; root.add(tvman);
 
 /* ---- cartoon outlines (inverted-hull) for an anime-figure look ---- */
 const outlineMat = new THREE.MeshBasicMaterial({color:0x3f3c35, side:THREE.BackSide});
@@ -287,7 +288,7 @@ function addOutlines(obj, grow){
     o.renderOrder=-1; m.parent.add(o);
   }
 }
-addOutlines(tvman, 0.012);
+addOutlines(tvman, 0.01);
 
 /* ---- grass + dirt mound base ---- */
 const base = new THREE.Group(); root.add(base);
