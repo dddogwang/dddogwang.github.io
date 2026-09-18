@@ -155,7 +155,7 @@
 
   const asset = (path) => {
     const normalized = String(path || '').replace(/^\/?assets\//, 'assets/');
-    return normalized.startsWith('assets/') ? `${normalized}?v=20260918-zh-originals1` : normalized;
+    return normalized.startsWith('assets/') ? `${normalized}?v=20260918-zh-originals2` : normalized;
   };
   const escapeHtml = (value) => String(value == null ? '' : value)
     .replace(/&/g, '&amp;')
