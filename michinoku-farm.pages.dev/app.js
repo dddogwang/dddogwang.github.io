@@ -155,7 +155,7 @@
 
   const asset = (path) => {
     const normalized = String(path || '').replace(/^\/?assets\//, 'assets/');
-    return normalized.startsWith('assets/') ? `${normalized}?v=20260918` : normalized;
+    return normalized.startsWith('assets/') ? `${normalized}?v=20260918-zh-originals1` : normalized;
   };
   const escapeHtml = (value) => String(value == null ? '' : value)
     .replace(/&/g, '&amp;')
@@ -170,6 +170,7 @@
   const categoryById = (id) => data.categories.find((category) => category.id === String(id));
   const categoryLabel = (category) => category ? (state.language === 'ja' ? category.name : category.label) : (state.language === 'ja' ? '新着商品' : '品牌新着商品');
   const categorySecondary = (category) => category ? (state.language === 'ja' ? category.label : category.name) : '';
+  const productName = (product) => state.language === 'zh' ? (product.nameZh || product.name) : product.name;
 
   function readLanguage() {
     const urlLanguage = new URL(window.location.href).searchParams.get('lang');
@@ -312,7 +313,7 @@
     const list = data.products.filter((product) => {
       const matchesCategory = state.category === 'all' || product.categories.includes(state.category);
       const categoryNames = product.categories.map((id) => categoryById(id)).filter(Boolean).flatMap((category) => [category.name, category.label]);
-      const searchText = [product.name, product.categoryText, ...categoryNames, ...product.variants.map((variant) => variant.name)].join(' ').toLowerCase();
+      const searchText = [product.name, product.nameZh, product.categoryText, ...categoryNames, ...product.variants.map((variant) => variant.name)].join(' ').toLowerCase();
       return matchesCategory && (!query || searchText.includes(query));
     });
     if (state.sort === 'price-asc') list.sort((a, b) => (a.price == null ? Infinity : a.price) - (b.price == null ? Infinity : b.price));
@@ -324,16 +325,17 @@
     const t = current();
     const inStock = availableCount(product);
     const stockText = t.stock(inStock, product.variants.length);
+    const displayName = productName(product);
     return `
       <article class="product-card" data-product-id="${escapeHtml(product.id)}">
-        <button type="button" aria-label="${escapeHtml(t.productAria(product.name))}">
+        <button type="button" aria-label="${escapeHtml(t.productAria(displayName))}">
           <div class="product-photo-wrap">
-            <img class="product-photo" src="${escapeHtml(asset(product.image))}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async" />
+            <img class="product-photo" src="${escapeHtml(asset(product.image))}" alt="${escapeHtml(displayName)}" loading="lazy" decoding="async" />
             ${product.home ? `<span class="product-badge">${escapeHtml(t.featured)}</span>` : ''}
           </div>
           <div class="product-info">
             <div class="product-category">${escapeHtml(categoryLabel(categoryById(product.categories[0])))}</div>
-            <h3 class="product-name">${escapeHtml(product.name)}</h3>
+            <h3 class="product-name">${escapeHtml(displayName)}</h3>
             <div class="product-price"><span>${escapeHtml(product.priceLabel)}</span><small>${escapeHtml(state.language === 'ja' ? 'RMB〜' : product.priceUnit)}</small></div>
             <div class="product-stock ${inStock ? '' : 'unavailable'}">${escapeHtml(stockText)}</div>
           </div>
@@ -367,11 +369,11 @@
     $('#cart-items').innerHTML = entries.map(({ entry, product, variant }) => `
       <article class="cart-item">
         <a class="cart-thumb" href="./?product=${encodeURIComponent(product.id)}">
-          <img src="${escapeHtml(asset(product.image))}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async" />
+          <img src="${escapeHtml(asset(product.image))}" alt="${escapeHtml(productName(product))}" loading="lazy" decoding="async" />
         </a>
         <div class="cart-info">
           <p class="product-category">${escapeHtml(categoryLabel(categoryById(product.categories[0])))}</p>
-          <h2>${escapeHtml(product.name)}</h2>
+          <h2>${escapeHtml(productName(product))}</h2>
           <p class="cart-variant">${escapeHtml(variant.name)}</p>
           <p class="cart-price">${escapeHtml(variant.priceText)}</p>
         </div>
@@ -437,12 +439,13 @@
     state.detailVariantId = variant.id;
     const available = variant.available;
     const category = categoryLabel(categoryById(product.categories[0]));
+    const displayName = productName(product);
     $('#modal-content').innerHTML = `
       <div class="detail-layout">
-        <img class="detail-image" src="${escapeHtml(asset(product.image))}" alt="${escapeHtml(product.name)}" />
+        <img class="detail-image" src="${escapeHtml(asset(product.image))}" alt="${escapeHtml(displayName)}" />
         <div class="detail-copy">
           <p class="eyebrow">${escapeHtml(t.detailEyebrow)} · ${escapeHtml(category)}</p>
-          <h2 id="detail-title">${escapeHtml(product.name)}</h2>
+          <h2 id="detail-title">${escapeHtml(displayName)}</h2>
           <div class="detail-price">${escapeHtml(variant.priceLabel)} <small>RMB</small></div>
           <div class="detail-metadata">
             <div class="metadata-row"><span>${escapeHtml(t.categoryMeta)}</span><span>${escapeHtml(category)}</span></div>
