@@ -105,6 +105,7 @@ h2 { margin: 12px 0 0; font-family: Georgia, "Times New Roman", serif; font-size
 .site-footer { display: flex; justify-content: space-between; gap: 20px; padding: 28px 0 42px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
 .site-footer p { margin: 0; }
 .site-footer a, .text-link { color: var(--gold); }
+.mobile-nav { display: none; }
 
 .overlay { position: fixed; z-index: 9; inset: 0; background: rgba(51, 46, 48, .35); backdrop-filter: blur(2px); }
 .product-modal { position: fixed; z-index: 10; top: 50%; left: 50%; width: min(920px, calc(100% - 32px)); max-height: min(780px, calc(100vh - 32px)); overflow: auto; transform: translate(-50%, -50%); border-radius: 10px; background: var(--white); box-shadow: var(--shadow); }
@@ -423,7 +424,7 @@ h2 { margin: 12px 0 0; font-family: Georgia, "Times New Roman", serif; font-size
 .announcement > span { max-width: 100%; text-align: center; }
 
 @media (max-width: 780px) {
-  body { overflow-x: hidden; }
+  body { overflow-x: hidden; padding-bottom: 65px; }
   .announcement {
     height: 29px;
     min-height: 29px;
@@ -503,7 +504,14 @@ h2 { margin: 12px 0 0; font-family: Georgia, "Times New Roman", serif; font-size
   .product-info { padding-top: 9px; }
   .product-name { min-height: 38px; margin-top: 6px; font-size: 12px; line-height: 1.5; }
   .product-price { font-size: 14px; }
- .site-footer { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .site-footer { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .mobile-nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 8; display: flex; justify-content: space-around; padding: 8px 25px max(8px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: rgba(255, 253, 251, .96); backdrop-filter: blur(14px); }
+  .mobile-nav a { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 75px; color: var(--muted); }
+  .mobile-nav a.active { color: var(--plum); }
+  .mobile-nav .nav-symbol { height: 20px; font: 21px/20px Georgia, serif; }
+  .mobile-nav em { font-size: 10px; font-style: normal; }
+  .mobile-nav small { font-size: 10px; line-height: 14px; }
+  .mobile-nav .cart-count { position: absolute; top: -2px; left: calc(50% + 10px); margin: 0; }
 }
 
 
@@ -932,6 +940,7 @@ body.cart-page-active main { display: none; }
   }
   .announcement > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .site-shell { width: 100%; margin: 0; }
+  main { min-height: 60vh; padding: 20px 18px 50px; }
   .site-header {
     display: grid;
     width: 100%;

@@ -257,8 +257,11 @@
     $('#catalog-nav-label').textContent = t.catalogNav;
     $('#catalog-nav-count').textContent = String(data.productCount);
     $('#cart-label').textContent = t.cart;
+    $('#mobile-products-label').textContent = t.catalogNav;
+    $('#mobile-cart-label').textContent = t.cart;
     $('#catalog-nav').classList.toggle('active', !state.cartPage);
     $('#cart-toggle').classList.toggle('active', state.cartPage);
+    updateMobileNav();
     $('#hero-eyebrow').textContent = t.heroEyebrow;
     $('#hero-title-main').textContent = t.heroTitleMain;
     $('#hero-title-em').textContent = t.heroTitleEm;
@@ -292,6 +295,30 @@
       button.classList.toggle('active', active);
       button.setAttribute('aria-pressed', String(active));
     });
+  }
+
+  function updateMobileNav() {
+    const productsLink = $('#mobile-products-nav');
+    const cartLink = $('#mobile-cart-nav');
+    const productsActive = !state.cartPage;
+    const cartActive = state.cartPage;
+    if (productsLink) {
+      productsLink.classList.toggle('active', productsActive);
+      if (productsActive) productsLink.setAttribute('aria-current', 'page');
+      else productsLink.removeAttribute('aria-current');
+    }
+    if (cartLink) {
+      cartLink.classList.toggle('active', cartActive);
+      if (cartActive) cartLink.setAttribute('aria-current', 'page');
+      else cartLink.removeAttribute('aria-current');
+    }
+    const catalogCount = $('#mobile-catalog-count');
+    if (catalogCount) catalogCount.textContent = String(data.productCount);
+    const cartCount = $('#mobile-cart-count');
+    if (cartCount) {
+      cartCount.textContent = String(state.cart.length);
+      cartCount.hidden = state.cart.length === 0;
+    }
   }
 
   function renderCategories() {
@@ -366,6 +393,7 @@
     state.cart = entries.map(({ entry }) => entry);
     const total = entries.reduce((sum, { variant }) => sum + (Number(variant.price) || 0), 0);
     $('#cart-count').textContent = String(entries.length);
+    updateMobileNav();
     $('#cart-items').innerHTML = entries.map(({ entry, product, variant }) => `
       <article class="cart-item">
         <a class="cart-thumb" href="./?product=${encodeURIComponent(product.id)}">
@@ -396,6 +424,7 @@
     $('#catalog-nav').classList.remove('active');
     $('#cart-toggle').classList.add('active');
     $('#cart-toggle').setAttribute('aria-expanded', 'true');
+    updateMobileNav();
     renderCart();
     window.scrollTo(0, 0);
     if (push) updateUrl({ view: 'cart', product: null }, false);
@@ -408,6 +437,7 @@
     $('#catalog-nav').classList.add('active');
     $('#cart-toggle').classList.remove('active');
     $('#cart-toggle').setAttribute('aria-expanded', 'false');
+    updateMobileNav();
     if (push) updateUrl({ view: null }, false);
   }
 
@@ -544,6 +574,17 @@
   }
 
   document.addEventListener('click', (event) => {
+    const mobileNav = event.target.closest('[data-mobile-nav]');
+    if (mobileNav) {
+      event.preventDefault();
+      if (mobileNav.dataset.mobileNav === 'cart') {
+        if (state.cartPage) closeCartPage();
+        else openCartPage();
+      } else if (state.cartPage) {
+        closeCartPage();
+      }
+      return;
+    }
     const language = event.target.closest('[data-language]');
     if (language) {
       setLanguage(language.dataset.language);
