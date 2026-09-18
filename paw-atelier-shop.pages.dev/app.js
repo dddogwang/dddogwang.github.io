@@ -5,17 +5,207 @@ const toast = document.querySelector('#toast');
 const STORE_NAME = '绒爪选物';
 const STORE_ENGLISH = 'PAW ATELIER';
 const CART_KEY = 'paw_atelier_web_cart_v1';
+const LANGUAGE_KEY = 'paw_atelier_language_v1';
 
-const categoryTranslations = {
-  'Hair ribbon': '发饰',
-  'Option': '配件',
-  'Collar': '项圈',
-  'Necklace': '项链',
-  'Pet Goods': '宠物用品',
-  'hair ribbon sold out': '已售罄发饰',
+const translations = {
+  zh: {
+    htmlLang: 'zh-CN',
+    title: `${STORE_NAME} · 商品目录`,
+    description: `${STORE_NAME} · 宠物发饰、项圈与配件商品目录。`,
+    announcementType: '宠物发饰与配件',
+    brandHomeAria: `${STORE_NAME}商品首页`,
+    identityCaption: 'PET RIBBON & ACCESSORIES',
+    navProducts: '商品',
+    navCart: '购物车',
+    mobileNavAria: '移动端导航',
+    searchPlaceholder: '搜索商品、规格或分类',
+    searchAria: '搜索商品、规格或分类',
+    clearSearch: '清空搜索',
+    languageSwitcher: '语言切换',
+    categoryHeading: '商品分类',
+    categoriesEn: 'Categories',
+    allItems: '全部商品',
+    allItemsEn: 'All items',
+    otherItems: '其他商品',
+    otherItemsEn: 'Other items',
+    categoryMap: {
+      'Hair ribbon': '发饰',
+      Option: '配件',
+      Collar: '项圈',
+      Necklace: '项链',
+      'Pet Goods': '宠物用品',
+      'hair ribbon sold out': '已售罄发饰',
+    },
+    heroAlt: `${STORE_NAME}商品精选`,
+    heroEyebrow: `${STORE_ENGLISH} · PET ACCESSORIES`,
+    heroTitle: '小小的装饰，<br>也值得认真挑选。',
+    heroDescription: '为宠物设计的发饰、项圈与配件。每一件都保留原有规格，价格按统一人民币公式计算。',
+    collectionEyebrow: `${STORE_ENGLISH} / COLLECTION`,
+    productCount: count => `${count} 件商品`,
+    searchResult: (query, count) => `“${query}”的搜索结果 · ${count} 件`,
+    searchResultsTitle: '搜索结果',
+    sort: '排序',
+    sortFeatured: '默认顺序',
+    sortPriceLow: '价格由低到高',
+    sortPriceHigh: '价格由高到低',
+    sortName: '按名称',
+    sortAria: '商品排序',
+    viewProduct: name => `查看 ${name}`,
+    soldOut: '暂时缺货',
+    variantCount: count => `${count} 个规格`,
+    singleVariant: '单一规格',
+    pricePending: '价格待确认',
+    priceFrom: price => `${price} 起`,
+    defaultVariant: '默认规格',
+    detailBack: '← 返回商品目录',
+    detailBreadcrumb: '商品',
+    variantLegend: '选择规格与价格',
+    variantStock: '暂时缺货',
+    priceReference: 'RMB 参考价',
+    currentVariant: '当前规格',
+    productCode: '商品编号',
+    productCategory: '商品分类',
+    source: '资料来源',
+    status: '在售状态',
+    available: '可加入购物车',
+    unavailable: '暂时缺货',
+    addToCart: '加入购物车',
+    inCart: '已在购物车',
+    detailNote: '选择规格后，加入购物车会保留对应规格和人民币参考价。',
+    missingProduct: '商品不存在',
+    missingProductText: '这件商品可能已经从当前目录中移除。',
+    returnProducts: '返回商品目录',
+    cartEyebrow: `${STORE_ENGLISH} / CART`,
+    cartTitle: '我的购物车',
+    sharedCartTitle: '朋友分享的购物车',
+    cartStatus: (count, shared) => `${count} 件商品${shared ? ' · 来自分享链接' : ' · 保存在本机'}`,
+    saveShared: '保存到我的购物车',
+    shareCart: '分享购物车',
+    clearCart: '清空',
+    remove: '移除',
+    cartTotal: '合计参考价',
+    cartEmptyTitle: '购物车还是空的',
+    cartEmptyText: '看到喜欢的商品，就先放进这里吧。',
+    sharedCartEmptyText: '这条分享清单没有可展示的商品。',
+    chooseProducts: '去挑选商品　↗',
+    cartNote: '购物车只保存在当前浏览器。分享时会把商品和规格编码进链接；它不是订单，价格和库存可能随时间变化。',
+    shareEmpty: '购物车是空的，先挑选几件喜欢的商品吧。',
+    shareCopied: '分享链接已复制，可以发给微信好友。',
+    copyPrompt: '复制这个购物车分享链接',
+    sharedTitle: `${STORE_NAME}购物车`,
+    sharedText: `看看我在${STORE_NAME}挑的商品`,
+    added: '已加入购物车。',
+    alreadyInCart: '这个规格已经在购物车里。',
+    savedToCart: '已保存到我的购物车。',
+    cartCleared: '购物车已清空。',
+    noProducts: '没有找到商品',
+    noProductsText: '换一个关键词，或选择其他分类试试。',
+    loadError: '商品目录暂时无法加载',
+    loadErrorText: '请通过本地服务器或网站地址打开此页面。',
+    sourceFallback: '品牌公开目录',
+    footerTagline: '为小小的它，挑一件刚刚好的装饰。',
+  },
+  ja: {
+    htmlLang: 'ja',
+    title: `${STORE_NAME} · 商品カタログ`,
+    description: `${STORE_NAME} · ペット用リボン、首輪、アクセサリーの商品カタログ。`,
+    announcementType: 'ペット用リボン・首輪・アクセサリー',
+    brandHomeAria: `${STORE_NAME}の商品トップ`,
+    identityCaption: 'PET RIBBON & ACCESSORIES',
+    navProducts: '商品',
+    navCart: 'カート',
+    mobileNavAria: 'モバイルナビゲーション',
+    searchPlaceholder: '商品名・仕様・カテゴリーを検索',
+    searchAria: '商品名・仕様・カテゴリーを検索',
+    clearSearch: '検索をクリア',
+    languageSwitcher: '言語切り替え',
+    categoryHeading: 'カテゴリー',
+    categoriesEn: 'Categories',
+    allItems: 'すべての商品',
+    allItemsEn: 'All items',
+    otherItems: 'その他の商品',
+    otherItemsEn: 'Other items',
+    categoryMap: {
+      'Hair ribbon': 'リボン・ヘアアクセサリー',
+      Option: 'アクセサリー',
+      Collar: '首輪',
+      Necklace: 'ネックレス',
+      'Pet Goods': 'ペット用品',
+      'hair ribbon sold out': '販売終了リボン',
+    },
+    heroAlt: `${STORE_NAME}の商品セレクション`,
+    heroEyebrow: `${STORE_ENGLISH} · PET ACCESSORIES`,
+    heroTitle: '小さな装いも、<br>丁寧に選ぶ。',
+    heroDescription: 'ペットのためのリボン、首輪、アクセサリー。各商品の仕様を保ち、価格は統一した人民元換算で表示しています。',
+    collectionEyebrow: `${STORE_ENGLISH} / COLLECTION`,
+    productCount: count => `${count}点の商品`,
+    searchResult: (query, count) => `「${query}」の検索結果 · ${count}点`,
+    searchResultsTitle: '検索結果',
+    sort: '並び替え',
+    sortFeatured: 'おすすめ順',
+    sortPriceLow: '価格の安い順',
+    sortPriceHigh: '価格の高い順',
+    sortName: '名前順',
+    sortAria: '商品の並び替え',
+    viewProduct: name => `${name}の詳細を見る`,
+    soldOut: '在庫切れ',
+    variantCount: count => `${count}仕様`,
+    singleVariant: '単一仕様',
+    pricePending: '価格未定',
+    priceFrom: price => `${price}から`,
+    defaultVariant: '標準仕様',
+    detailBack: '← 商品一覧へ戻る',
+    detailBreadcrumb: '商品',
+    variantLegend: '仕様と価格を選択',
+    variantStock: '在庫切れ',
+    priceReference: 'RMB参考価格',
+    currentVariant: '選択中の仕様',
+    productCode: '商品番号',
+    productCategory: 'カテゴリー',
+    source: '資料出典',
+    status: '販売状況',
+    available: 'カートに追加できます',
+    unavailable: '在庫切れ',
+    addToCart: 'カートに追加',
+    inCart: 'カートに追加済み',
+    detailNote: '仕様を選択すると、その仕様と人民元参考価格がカートに保存されます。',
+    missingProduct: '商品が見つかりません',
+    missingProductText: 'この商品は現在のカタログから削除された可能性があります。',
+    returnProducts: '商品一覧に戻る',
+    cartEyebrow: `${STORE_ENGLISH} / CART`,
+    cartTitle: 'マイカート',
+    sharedCartTitle: '友だちから共有されたカート',
+    cartStatus: (count, shared) => `${count}点${shared ? ' · 共有リンクから' : ' · この端末に保存'}`,
+    saveShared: 'マイカートに保存',
+    shareCart: 'カートを共有',
+    clearCart: '空にする',
+    remove: '削除',
+    cartTotal: '参考価格合計',
+    cartEmptyTitle: 'カートは空です',
+    cartEmptyText: '気になる商品をカートに入れてみましょう。',
+    sharedCartEmptyText: 'この共有リストに表示できる商品はありません。',
+    chooseProducts: '商品を選ぶ　↗',
+    cartNote: 'カートは現在のブラウザにのみ保存されます。共有時は商品と仕様をリンクに含めます。注文ではないため、価格や在庫は変わる場合があります。',
+    shareEmpty: 'カートが空です。まずお気に入りの商品を選んでください。',
+    shareCopied: '共有リンクをコピーしました。WeChatで友だちに送れます。',
+    copyPrompt: 'カート共有リンクをコピー',
+    sharedTitle: `${STORE_NAME}のカート`,
+    sharedText: `${STORE_NAME}で選んだ商品を見てください`,
+    added: 'カートに追加しました。',
+    alreadyInCart: 'この仕様はすでにカートに入っています。',
+    savedToCart: 'マイカートに保存しました。',
+    cartCleared: 'カートを空にしました。',
+    noProducts: '商品が見つかりません',
+    noProductsText: 'キーワードを変えるか、別のカテゴリーを選んでください。',
+    loadError: 'カタログを読み込めません',
+    loadErrorText: 'ローカルサーバーまたはサイトのURLから開いてください。',
+    sourceFallback: '公開カタログ',
+    footerTagline: '小さな家族に、ちょうどいい装いを。',
+  },
 };
 
 const state = {
+  language: 'zh',
   catalog: null,
   products: [],
   productMap: new Map(),
@@ -39,13 +229,77 @@ const assetPath = value => {
 
 const baseCategoryName = name => String(name || '').split('：')[0].trim();
 
-function categoryLabel(category) {
-  if (!category) return '其他商品';
-  return categoryTranslations[baseCategoryName(category.name)] || category.name;
+function ui(key, ...args) {
+  const value = translations[state.language]?.[key] ?? translations.zh[key] ?? key;
+  return typeof value === 'function' ? value(...args) : value;
+}
+
+function readLanguage() {
+  try {
+    const saved = localStorage.getItem(LANGUAGE_KEY);
+    return saved === 'ja' ? 'ja' : 'zh';
+  } catch {
+    return 'zh';
+  }
+}
+
+function setLanguage(language) {
+  state.language = language === 'ja' ? 'ja' : 'zh';
+  try { localStorage.setItem(LANGUAGE_KEY, state.language); } catch { /* storage is best effort */ }
+  toast.classList.remove('show');
+  applyLanguage();
+  if (state.catalog) render();
+}
+
+function applyLanguage() {
+  const lang = translations[state.language];
+  document.documentElement.lang = lang.htmlLang;
+  document.title = lang.title;
+  document.querySelector('#metaDescription')?.setAttribute('content', lang.description);
+  const textBindings = {
+    announcementType: lang.announcementType,
+    identityCaption: lang.identityCaption,
+    navProductsLabel: lang.navProducts,
+    navCartLabel: lang.navCart,
+    mobileProductsLabel: lang.navProducts,
+    mobileCartLabel: lang.navCart,
+    footerTagline: lang.footerTagline,
+  };
+  Object.entries(textBindings).forEach(([id, value]) => {
+    const element = document.querySelector(`#${id}`);
+    if (element) element.textContent = value;
+  });
+  document.querySelector('#brandHome')?.setAttribute('aria-label', lang.brandHomeAria);
+  document.querySelector('#mobileNav')?.setAttribute('aria-label', lang.mobileNavAria);
+  document.querySelector('#languageSwitcher')?.setAttribute('aria-label', lang.languageSwitcher);
+  if (searchInput) {
+    searchInput.placeholder = lang.searchPlaceholder;
+    searchInput.setAttribute('aria-label', lang.searchAria);
+  }
+  clearSearch?.setAttribute('aria-label', lang.clearSearch);
+  document.querySelectorAll('[data-language]').forEach(button => {
+    const active = button.dataset.language === state.language;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
 }
 
 function categoryIsPaused(category) {
   return String(category?.name || '').includes('販売休止');
+}
+
+function categoryLabel(category) {
+  if (!category) return ui('otherItems');
+  const base = baseCategoryName(category.name);
+  const mapped = translations[state.language].categoryMap[base] || (state.language === 'zh' ? category.sheetZh || base : base);
+  if (categoryIsPaused(category)) return state.language === 'ja' ? `${mapped}（販売休止中）` : `${mapped}（暂停销售）`;
+  return mapped;
+}
+
+function categorySecondary(category) {
+  if (!category) return ui('otherItemsEn');
+  if (categoryIsPaused(category)) return state.language === 'ja' ? '販売休止中' : '販売休止中';
+  return baseCategoryName(category.name);
 }
 
 function isVariantAvailable(variant) {
@@ -53,18 +307,19 @@ function isVariantAvailable(variant) {
 }
 
 function formatPrice(value) {
-  if (value == null || Number.isNaN(Number(value))) return '价格待确认';
-  return `¥${new Intl.NumberFormat('zh-CN').format(Number(value))}`;
+  if (value == null || Number.isNaN(Number(value))) return ui('pricePending');
+  const locale = state.language === 'ja' ? 'ja-JP' : 'zh-CN';
+  return `¥${new Intl.NumberFormat(locale).format(Number(value))}`;
 }
 
 function formatVariantPrice(variant) {
-  if (!variant || variant.price == null) return '价格待确认';
+  if (!variant || variant.price == null) return ui('pricePending');
   return formatPrice(variant.price);
 }
 
 function getProductVariants(product) {
   if (Array.isArray(product?.variants) && product.variants.length) return product.variants;
-  return [{ id: 'default', name: '默认规格', price: product?.price, priceText: product?.priceText, available: true }];
+  return [{ id: 'default', name: ui('defaultVariant'), price: product?.price, priceText: product?.priceText, available: true }];
 }
 
 function getDefaultVariant(product) {
@@ -81,15 +336,15 @@ function getSelectedVariant(product) {
 
 function priceRange(product) {
   const values = getProductVariants(product).map(variant => Number(variant.price)).filter(value => Number.isFinite(value));
-  if (!values.length) return '价格待确认';
+  if (!values.length) return ui('pricePending');
   const min = Math.min(...values);
   const max = Math.max(...values);
-  return min === max ? formatPrice(min) : `${formatPrice(min)} 起`;
+  return min === max ? formatPrice(min) : ui('priceFrom', formatPrice(min));
 }
 
 function getProductCategories(product) {
   const categories = (product.categories || []).map(id => state.categoryMap.get(String(id))).filter(Boolean);
-  return categories.length ? categories : [{ id: 'uncategorized', name: '其他商品', label: '其他商品' }];
+  return categories.length ? categories : [{ id: 'uncategorized', name: ui('otherItems'), label: ui('otherItems') }];
 }
 
 function primaryCategory(product) {
@@ -139,7 +394,7 @@ function cartProducts(entries = state.cartEntries) {
   return dedupeEntries(entries).map(entry => {
     const product = state.productMap.get(entry.productId);
     const variant = getProductVariants(product).find(item => String(item.id) === String(entry.variantId)) || getDefaultVariant(product);
-    return { ...product, variant, cartKey: entryKey(entry), variantName: variant?.name || '默认规格' };
+    return { ...product, variant, cartKey: entryKey(entry), variantName: variant?.name || ui('defaultVariant') };
   }).filter(item => item.variant);
 }
 
@@ -152,8 +407,7 @@ function addToCart(product, variant) {
 }
 
 function removeFromCart(key, entries = state.cartEntries) {
-  const next = entries.filter(entry => entryKey(entry) !== key);
-  return next;
+  return entries.filter(entry => entryKey(entry) !== key);
 }
 
 function updateCartCount() {
@@ -175,9 +429,7 @@ function parseRoute() {
   const [path, queryString = ''] = raw.split('?');
   const parts = path.split('/').filter(Boolean);
   const params = new URLSearchParams(queryString);
-  if (!parts.length || parts[0] === 'products') {
-    return { name: 'products', category: params.get('category') || 'all' };
-  }
+  if (!parts.length || parts[0] === 'products') return { name: 'products', category: params.get('category') || 'all' };
   if (parts[0] === 'product') return { name: 'product', id: decodeURIComponent(parts[1] || '') };
   if (parts[0] === 'cart') return { name: 'cart', shared: params.has('ids'), ids: params.get('ids') || '' };
   return { name: 'products', category: 'all' };
@@ -201,41 +453,49 @@ function parseSharedEntries(value) {
 function shareCart(entries) {
   const cleanEntries = dedupeEntries(entries);
   if (!cleanEntries.length) {
-    showToast('购物车是空的，先挑选几件喜欢的商品吧。');
+    showToast(ui('shareEmpty'));
     return;
   }
   const url = `${location.origin}${location.pathname}#/cart?ids=${encodeURIComponent(serializeEntries(cleanEntries))}`;
-  const shareData = { title: `${STORE_NAME}购物车`, text: `看看我在${STORE_NAME}挑的商品`, url };
+  const shareData = { title: ui('sharedTitle'), text: ui('sharedText'), url };
   if (navigator.share) {
     navigator.share(shareData).catch(() => {});
     return;
   }
   if (navigator.clipboard?.writeText) {
-    navigator.clipboard.writeText(url).then(() => showToast('分享链接已复制，可以发给微信好友。')).catch(() => window.prompt('复制这个购物车分享链接', url));
+    navigator.clipboard.writeText(url).then(() => showToast(ui('shareCopied'))).catch(() => window.prompt(ui('copyPrompt'), url));
     return;
   }
-  window.prompt('复制这个购物车分享链接', url);
+  window.prompt(ui('copyPrompt'), url);
 }
 
 function renderCategories() {
   const categories = [...state.categoryMap.values()];
-  const countFor = id => id === 'all' ? state.products.length : state.products.filter(product => id === 'uncategorized' ? !(product.categories || []).length : (product.categories || []).map(String).includes(String(id))).length;
-  const items = [{ id: 'all', label: '全部商品', jp: 'All items' }, ...categories.map(category => ({ id: category.id, label: categoryLabel(category), jp: baseCategoryName(category.name), paused: categoryIsPaused(category) }))];
+  const countFor = id => id === 'all'
+    ? state.products.length
+    : state.products.filter(product => id === 'uncategorized'
+      ? !(product.categories || []).length
+      : (product.categories || []).map(String).includes(String(id))).length;
+  const items = [
+    { id: 'all', label: ui('allItems'), secondary: ui('allItemsEn') },
+    ...categories.map(category => ({ id: category.id, label: categoryLabel(category), secondary: categorySecondary(category), paused: categoryIsPaused(category) })),
+  ];
   const uncategorizedCount = countFor('uncategorized');
-  if (uncategorizedCount) items.push({ id: 'uncategorized', label: '其他商品', jp: 'Other items' });
-  return items.map(item => `<a class="category-link ${state.category === String(item.id) ? 'active' : ''} ${item.paused ? 'paused' : ''}" href="#/products?category=${encodeURIComponent(item.id)}"><span class="category-text"><span>${escapeHtml(item.label)}</span><span class="jp">${escapeHtml(item.jp)}</span></span><span class="count">${countFor(item.id)}</span></a>`).join('');
+  if (uncategorizedCount) items.push({ id: 'uncategorized', label: ui('otherItems'), secondary: ui('otherItemsEn') });
+  return items.map(item => `<a class="category-link ${state.category === String(item.id) ? 'active' : ''} ${item.paused ? 'paused' : ''}" href="#/products?category=${encodeURIComponent(item.id)}"><span class="category-text"><span>${escapeHtml(item.label)}</span><span class="jp">${escapeHtml(item.secondary)}</span></span><span class="count">${countFor(item.id)}</span></a>`).join('');
 }
 
 function matchesQuery(product) {
   if (!state.query) return true;
-  const categoryText = getProductCategories(product).flatMap(category => [category.label, category.name]).join(' ');
+  const categoryText = getProductCategories(product).flatMap(category => [categoryLabel(category), category.name]).join(' ');
   const variants = getProductVariants(product).map(variant => variant.name).join(' ');
   return `${product.name} ${categoryText} ${variants} ${product.id}`.toLowerCase().includes(state.query.toLowerCase());
 }
 
 function filteredProducts() {
   let products = state.products.filter(product => {
-    const categoryMatch = state.category === 'all' || (state.category === 'uncategorized' ? !(product.categories || []).length : (product.categories || []).map(String).includes(String(state.category)));
+    const categoryMatch = state.category === 'all'
+      || (state.category === 'uncategorized' ? !(product.categories || []).length : (product.categories || []).map(String).includes(String(state.category)));
     return categoryMatch && matchesQuery(product);
   });
   if (state.sort === 'price-low') products = [...products].sort((a, b) => (Number(a.price) || Infinity) - (Number(b.price) || Infinity));
@@ -248,17 +508,16 @@ function productCard(product) {
   const category = primaryCategory(product);
   const variants = getProductVariants(product);
   const hasAvailable = variants.some(isVariantAvailable);
-  return `<article class="product-card"><a class="product-link" href="#/product/${encodeURIComponent(product.id)}" aria-label="查看 ${escapeHtml(product.name)}"><div class="product-image"><img src="${escapeHtml(assetPath(product.image))}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async"><span class="image-mark ${hasAvailable ? '' : 'sold'}">${hasAvailable ? STORE_ENGLISH : '暂时缺货'}</span></div><div class="product-info"><p class="product-category">${escapeHtml(category.label)}</p><h2>${escapeHtml(product.name)}</h2><div class="product-meta"><span class="product-price">${escapeHtml(priceRange(product))}<small>RMB</small></span><span class="variant-count">${variants.length > 1 ? `${variants.length} 个规格` : '单一规格'}</span></div></div></a></article>`;
+  return `<article class="product-card"><a class="product-link" href="#/product/${encodeURIComponent(product.id)}" aria-label="${escapeHtml(ui('viewProduct', product.name))}"><div class="product-image"><img src="${escapeHtml(assetPath(product.image))}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async"><span class="image-mark ${hasAvailable ? '' : 'sold'}">${hasAvailable ? STORE_ENGLISH : ui('soldOut')}</span></div><div class="product-info"><p class="product-category">${escapeHtml(categoryLabel(category))}</p><h2>${escapeHtml(product.name)}</h2><div class="product-meta"><span class="product-price">${escapeHtml(priceRange(product))}<small>RMB</small></span><span class="variant-count">${variants.length > 1 ? ui('variantCount', variants.length) : ui('singleVariant')}</span></div></div></a></article>`;
 }
 
 function renderProductsPage() {
   const filtered = filteredProducts();
-  const shown = filtered;
-  const category = state.category === 'all' ? null : state.category === 'uncategorized' ? null : state.categoryMap.get(String(state.category));
-  const title = category ? categoryLabel(category) : state.category === 'uncategorized' ? '其他商品' : state.query ? '搜索结果' : '全部商品';
-  const description = state.query ? `“${escapeHtml(state.query)}”的搜索结果 · ${filtered.length} 件` : `${filtered.length} 件商品`;
-  const loadMore = '';
-  app.innerHTML = `<section class="hero"><div class="hero-media"><img src="${escapeHtml(assetPath(state.catalog.brand.banner))}" alt="${escapeHtml(STORE_NAME)}商品精选"></div><div class="hero-copy"><span class="eyebrow">${STORE_ENGLISH} · PET ACCESSORIES</span><h1>小小的装饰，<br>也值得认真挑选。</h1><p>为宠物设计的发饰、项圈与配件。每一件都保留原有规格，价格按统一人民币公式计算。</p></div><div class="hero-serial">THE COLLECTION<br><strong>01</strong></div></section><div class="shop-layout"><aside class="filter-panel"><div class="filter-heading"><span>商品分类</span><small>Categories</small></div><div class="category-list">${renderCategories()}</div></aside><section class="shop-content"><div class="listing-head"><div class="listing-title"><span class="eyebrow">${STORE_ENGLISH} / COLLECTION</span><h1>${escapeHtml(title)}</h1><p>${description}</p></div><div class="listing-controls"><label for="sortSelect">排序</label><select id="sortSelect" aria-label="商品排序"><option value="featured">默认顺序</option><option value="price-low">价格由低到高</option><option value="price-high">价格由高到低</option><option value="name">按名称</option></select></div></div><div class="product-grid">${shown.length ? shown.map(productCard).join('') : '<div class="empty-state"><strong>没有找到商品</strong><p>换一个关键词，或选择其他分类试试。</p></div>'}</div>${loadMore}</section></div>`;
+  const category = state.category === 'all' || state.category === 'uncategorized' ? null : state.categoryMap.get(String(state.category));
+  const title = category ? categoryLabel(category) : state.category === 'uncategorized' ? ui('otherItems') : state.query ? ui('searchResultsTitle') : ui('allItems');
+  const description = state.query ? ui('searchResult', escapeHtml(state.query), filtered.length) : ui('productCount', filtered.length);
+  const emptyState = `<div class="empty-state"><strong>${escapeHtml(ui('noProducts'))}</strong><p>${escapeHtml(ui('noProductsText'))}</p></div>`;
+  app.innerHTML = `<section class="hero"><div class="hero-media"><img src="${escapeHtml(assetPath(state.catalog.brand.banner))}" alt="${escapeHtml(ui('heroAlt'))}"></div><div class="hero-copy"><span class="eyebrow">${escapeHtml(ui('heroEyebrow'))}</span><h1>${ui('heroTitle')}</h1><p>${escapeHtml(ui('heroDescription'))}</p></div><div class="hero-serial">THE COLLECTION<br><strong>01</strong></div></section><div class="shop-layout"><aside class="filter-panel"><div class="filter-heading"><span>${escapeHtml(ui('categoryHeading'))}</span><small>${escapeHtml(ui('categoriesEn'))}</small></div><div class="category-list">${renderCategories()}</div></aside><section class="shop-content"><div class="listing-head"><div class="listing-title"><span class="eyebrow">${escapeHtml(ui('collectionEyebrow'))}</span><h1>${escapeHtml(title)}</h1><p>${description}</p></div><div class="listing-controls"><label for="sortSelect">${escapeHtml(ui('sort'))}</label><select id="sortSelect" aria-label="${escapeHtml(ui('sortAria'))}"><option value="featured">${escapeHtml(ui('sortFeatured'))}</option><option value="price-low">${escapeHtml(ui('sortPriceLow'))}</option><option value="price-high">${escapeHtml(ui('sortPriceHigh'))}</option><option value="name">${escapeHtml(ui('sortName'))}</option></select></div></div><div class="product-grid">${filtered.length ? filtered.map(productCard).join('') : emptyState}</div></section></div>`;
   const sortSelect = document.querySelector('#sortSelect');
   if (sortSelect) {
     sortSelect.value = state.sort;
@@ -268,7 +527,7 @@ function renderProductsPage() {
 
 function renderDetailPage(product) {
   if (!product) {
-    app.innerHTML = '<div class="empty-state"><strong>商品不存在</strong><p>这件商品可能已经从当前目录中移除。</p><a class="text-link" href="#/products">返回商品目录</a></div>';
+    app.innerHTML = `<div class="empty-state"><strong>${escapeHtml(ui('missingProduct'))}</strong><p>${escapeHtml(ui('missingProductText'))}</p><a class="text-link" href="#/products">${escapeHtml(ui('returnProducts'))}</a></div>`;
     return;
   }
   const variants = getProductVariants(product);
@@ -276,8 +535,8 @@ function renderDetailPage(product) {
   const hasAvailable = variants.some(isVariantAvailable);
   const inCart = state.cartEntries.some(entry => entry.productId === product.id && String(entry.variantId) === String(selected?.id));
   const categories = getProductCategories(product);
-  const variantOptions = variants.length > 1 ? `<fieldset class="variant-fieldset"><legend>选择规格与价格</legend><div class="variant-list">${variants.map(variant => `<label class="variant-option ${String(variant.id) === String(selected?.id) ? 'selected' : ''} ${isVariantAvailable(variant) ? '' : 'unavailable'}"><input type="radio" name="variant" value="${escapeHtml(variant.id)}" ${String(variant.id) === String(selected?.id) ? 'checked' : ''} ${isVariantAvailable(variant) ? '' : 'disabled'}><span class="variant-name">${escapeHtml(variant.name || '默认规格')}</span><span class="variant-price">${escapeHtml(variant.priceText || formatVariantPrice(variant))}</span>${isVariantAvailable(variant) ? '' : '<span class="variant-stock">暂时缺货</span>'}</label>`).join('')}</div></fieldset>` : '';
-  app.innerHTML = `<div class="detail-page"><div class="breadcrumb"><a href="#/products">商品</a><span>/</span><span>${escapeHtml(categories.map(category => category.label).join(' / '))}</span><span>/</span><span>${escapeHtml(product.name)}</span></div><div class="detail-layout"><div class="detail-media"><img src="${escapeHtml(assetPath(product.image))}" alt="${escapeHtml(product.name)}"><span class="image-mark ${hasAvailable ? '' : 'sold'}">${hasAvailable ? STORE_ENGLISH : '暂时缺货'}</span></div><div class="detail-copy"><a class="back-link" href="#/products">← 返回商品目录</a><span class="eyebrow">${STORE_ENGLISH} / ${escapeHtml(categories[0].label)}</span><h1>${escapeHtml(product.name)}</h1><p class="detail-price">${escapeHtml(formatVariantPrice(selected))}<small>RMB 参考价</small></p><div class="detail-divider"></div>${variantOptions}<dl class="detail-facts"><div class="detail-fact"><dt>当前规格</dt><dd>${escapeHtml(selected?.name || '默认规格')}</dd></div><div class="detail-fact"><dt>商品编号</dt><dd>${escapeHtml(selected?.itemCode || product.id)}</dd></div><div class="detail-fact"><dt>商品分类</dt><dd>${escapeHtml(categories.map(category => category.label).join(' / '))}</dd></div><div class="detail-fact"><dt>资料来源</dt><dd>${escapeHtml(state.catalog.brand.sourceBrand || '品牌公开目录')}</dd></div><div class="detail-fact"><dt>在售状态</dt><dd>${isVariantAvailable(selected) ? '可加入购物车' : '暂时缺货'}</dd></div></dl><button class="add-button" type="button" id="detailAdd" ${!isVariantAvailable(selected) || inCart ? 'disabled' : ''}>${inCart ? '已在购物车' : '加入购物车'}</button><p class="detail-note">选择规格后，加入购物车会保留对应规格和人民币参考价。</p></div></div></div>`;
+  const variantOptions = variants.length > 1 ? `<fieldset class="variant-fieldset"><legend>${escapeHtml(ui('variantLegend'))}</legend><div class="variant-list">${variants.map(variant => `<label class="variant-option ${String(variant.id) === String(selected?.id) ? 'selected' : ''} ${isVariantAvailable(variant) ? '' : 'unavailable'}"><input type="radio" name="variant" value="${escapeHtml(variant.id)}" ${String(variant.id) === String(selected?.id) ? 'checked' : ''} ${isVariantAvailable(variant) ? '' : 'disabled'}><span class="variant-name">${escapeHtml(variant.name || ui('defaultVariant'))}</span><span class="variant-price">${escapeHtml(variant.priceText || formatVariantPrice(variant))}</span>${isVariantAvailable(variant) ? '' : `<span class="variant-stock">${escapeHtml(ui('variantStock'))}</span>`}</label>`).join('')}</div></fieldset>` : '';
+  app.innerHTML = `<div class="detail-page"><div class="breadcrumb"><a href="#/products">${escapeHtml(ui('detailBreadcrumb'))}</a><span>/</span><span>${escapeHtml(categories.map(category => categoryLabel(category)).join(' / '))}</span><span>/</span><span>${escapeHtml(product.name)}</span></div><div class="detail-layout"><div class="detail-media"><img src="${escapeHtml(assetPath(product.image))}" alt="${escapeHtml(product.name)}"><span class="image-mark ${hasAvailable ? '' : 'sold'}">${hasAvailable ? STORE_ENGLISH : ui('soldOut')}</span></div><div class="detail-copy"><a class="back-link" href="#/products">${escapeHtml(ui('detailBack'))}</a><span class="eyebrow">${escapeHtml(STORE_ENGLISH)} / ${escapeHtml(categoryLabel(categories[0]))}</span><h1>${escapeHtml(product.name)}</h1><p class="detail-price">${escapeHtml(formatVariantPrice(selected))}<small>${escapeHtml(ui('priceReference'))}</small></p><div class="detail-divider"></div>${variantOptions}<dl class="detail-facts"><div class="detail-fact"><dt>${escapeHtml(ui('currentVariant'))}</dt><dd>${escapeHtml(selected?.name || ui('defaultVariant'))}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('productCode'))}</dt><dd>${escapeHtml(selected?.itemCode || product.id)}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('productCategory'))}</dt><dd>${escapeHtml(categories.map(category => categoryLabel(category)).join(' / '))}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('source'))}</dt><dd>${escapeHtml(state.catalog.brand.sourceBrand || ui('sourceFallback'))}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('status'))}</dt><dd>${escapeHtml(isVariantAvailable(selected) ? ui('available') : ui('unavailable'))}</dd></div></dl><button class="add-button" type="button" id="detailAdd" ${!isVariantAvailable(selected) || inCart ? 'disabled' : ''}>${escapeHtml(inCart ? ui('inCart') : ui('addToCart'))}</button><p class="detail-note">${escapeHtml(ui('detailNote'))}</p></div></div></div>`;
   document.querySelectorAll('input[name="variant"]').forEach(input => input.addEventListener('change', event => {
     state.selectedVariants.set(product.id, event.target.value);
     renderDetailPage(product);
@@ -285,7 +544,7 @@ function renderDetailPage(product) {
   }));
   document.querySelector('#detailAdd')?.addEventListener('click', () => {
     const added = addToCart(product, getSelectedVariant(product));
-    showToast(added ? '已加入购物车。' : '这个规格已经在购物车里。');
+    showToast(added ? ui('added') : ui('alreadyInCart'));
     renderDetailPage(product);
     updateHeader();
   });
@@ -294,14 +553,14 @@ function renderDetailPage(product) {
 function renderCartPage(route) {
   const sharedEntries = route.shared ? parseSharedEntries(route.ids) : state.cartEntries;
   const items = cartProducts(sharedEntries);
-  const title = route.shared ? '朋友分享的购物车' : '我的购物车';
+  const title = route.shared ? ui('sharedCartTitle') : ui('cartTitle');
   const total = items.reduce((sum, item) => sum + (Number(item.variant?.price) || 0), 0);
-  const actionButtons = items.length ? `<div class="cart-actions">${route.shared ? '<button class="save-button" type="button" data-save-shared>保存到我的购物车</button>' : ''}<button class="share-button" type="button" data-share-cart>分享购物车</button>${route.shared ? '' : '<button class="clear-button" type="button" data-clear-cart>清空</button>'}</div>` : '';
-  const list = items.length ? `<div class="cart-grid">${items.map(item => `<article class="cart-item"><a class="cart-thumb" href="#/product/${encodeURIComponent(item.id)}"><img src="${escapeHtml(assetPath(item.image))}" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async"></a><div class="cart-info"><p class="product-category">${escapeHtml(primaryCategory(item).label)}</p><h2>${escapeHtml(item.name)}</h2><p class="cart-variant">${escapeHtml(item.variantName)}</p><p class="cart-price">${escapeHtml(formatVariantPrice(item.variant))}</p></div><button class="remove-button" type="button" data-remove-cart="${escapeHtml(item.cartKey)}">移除</button></article>`).join('')}</div><div class="cart-total"><span>合计参考价</span><strong>${total ? escapeHtml(formatPrice(total)) : '价格待确认'}<small>RMB</small></strong></div>` : `<div class="cart-empty"><div class="empty-symbol">♡</div><h2>购物车还是空的</h2><p>${route.shared ? '这条分享清单没有可展示的商品。' : '看到喜欢的商品，就先放进这里吧。'}</p><a href="#/products">去挑选商品　↗</a></div>`;
-  app.innerHTML = `<section class="cart-page"><div class="cart-head"><div><span class="eyebrow">${STORE_ENGLISH} / CART</span><h1>${escapeHtml(title)}</h1><p>${items.length} 件商品${route.shared ? ' · 来自分享链接' : ' · 保存在本机'}</p></div><span class="cart-head-mark">♡</span></div>${actionButtons}${list}<p class="cart-note">购物车只保存在当前浏览器。分享时会把商品和规格编码进链接；它不是订单，价格和库存可能随时间变化。</p></section>`;
+  const actionButtons = items.length ? `<div class="cart-actions">${route.shared ? `<button class="save-button" type="button" data-save-shared>${escapeHtml(ui('saveShared'))}</button>` : ''}<button class="share-button" type="button" data-share-cart>${escapeHtml(ui('shareCart'))}</button>${route.shared ? '' : `<button class="clear-button" type="button" data-clear-cart>${escapeHtml(ui('clearCart'))}</button>`}</div>` : '';
+  const list = items.length ? `<div class="cart-grid">${items.map(item => `<article class="cart-item"><a class="cart-thumb" href="#/product/${encodeURIComponent(item.id)}"><img src="${escapeHtml(assetPath(item.image))}" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async"></a><div class="cart-info"><p class="product-category">${escapeHtml(categoryLabel(primaryCategory(item)))}</p><h2>${escapeHtml(item.name)}</h2><p class="cart-variant">${escapeHtml(item.variantName)}</p><p class="cart-price">${escapeHtml(formatVariantPrice(item.variant))}</p></div><button class="remove-button" type="button" data-remove-cart="${escapeHtml(item.cartKey)}">${escapeHtml(ui('remove'))}</button></article>`).join('')}</div><div class="cart-total"><span>${escapeHtml(ui('cartTotal'))}</span><strong>${total ? escapeHtml(formatPrice(total)) : escapeHtml(ui('pricePending'))}<small>RMB</small></strong></div>` : `<div class="cart-empty"><div class="empty-symbol">♡</div><h2>${escapeHtml(ui('cartEmptyTitle'))}</h2><p>${escapeHtml(route.shared ? ui('sharedCartEmptyText') : ui('cartEmptyText'))}</p><a href="#/products">${escapeHtml(ui('chooseProducts'))}</a></div>`;
+  app.innerHTML = `<section class="cart-page"><div class="cart-head"><div><span class="eyebrow">${escapeHtml(ui('cartEyebrow'))}</span><h1>${escapeHtml(title)}</h1><p>${escapeHtml(ui('cartStatus', items.length, route.shared))}</p></div><span class="cart-head-mark">♡</span></div>${actionButtons}${list}<p class="cart-note">${escapeHtml(ui('cartNote'))}</p></section>`;
   document.querySelector('[data-share-cart]')?.addEventListener('click', () => shareCart(sharedEntries));
-  document.querySelector('[data-clear-cart]')?.addEventListener('click', () => { writeCart([]); renderCartPage({ name: 'cart', shared: false, ids: '' }); updateHeader(); showToast('购物车已清空。'); });
-  document.querySelector('[data-save-shared]')?.addEventListener('click', () => { writeCart([...state.cartEntries, ...sharedEntries]); location.hash = '#/cart'; showToast('已保存到我的购物车。'); });
+  document.querySelector('[data-clear-cart]')?.addEventListener('click', () => { writeCart([]); renderCartPage({ name: 'cart', shared: false, ids: '' }); updateHeader(); showToast(ui('cartCleared')); });
+  document.querySelector('[data-save-shared]')?.addEventListener('click', () => { writeCart([...state.cartEntries, ...sharedEntries]); location.hash = '#/cart'; showToast(ui('savedToCart')); });
   document.querySelectorAll('[data-remove-cart]').forEach(button => button.addEventListener('click', () => {
     const next = removeFromCart(button.dataset.removeCart, sharedEntries);
     if (route.shared) {
@@ -346,6 +605,8 @@ function render() {
 }
 
 async function init() {
+  state.language = readLanguage();
+  applyLanguage();
   try {
     const response = await fetch('./data/catalog.json', { cache: 'no-store' });
     if (!response.ok) throw new Error(`catalog request failed: ${response.status}`);
@@ -357,10 +618,12 @@ async function init() {
     document.querySelector('#brandLogo').src = assetPath(state.catalog.brand.logo);
     render();
   } catch (error) {
-    app.innerHTML = '<div class="empty-state"><strong>商品目录暂时无法加载</strong><p>请通过本地服务器或网站地址打开此页面。</p></div>';
+    app.innerHTML = `<div class="empty-state"><strong>${escapeHtml(ui('loadError'))}</strong><p>${escapeHtml(ui('loadErrorText'))}</p></div>`;
     console.error(error);
   }
 }
+
+document.querySelectorAll('[data-language]').forEach(button => button.addEventListener('click', () => setLanguage(button.dataset.language)));
 
 searchInput.addEventListener('input', event => {
   state.query = event.target.value.trim();

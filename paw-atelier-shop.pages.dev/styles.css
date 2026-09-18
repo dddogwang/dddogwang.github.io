@@ -60,6 +60,11 @@ img { display: block; max-width: 100%; }
 .desktop-nav a.active::after { position: absolute; right: 0; bottom: 8px; left: 0; height: 2px; background: var(--pink); content: ""; }
 .desktop-nav small { margin-left: 5px; color: var(--muted); font: 10px Georgia, serif; }
 .cart-count { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; margin-left: 5px; padding: 0 5px; border-radius: 20px; color: #fff; background: var(--pink); font: 10px/1 Georgia, serif; vertical-align: middle; }
+.header-tools { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; justify-self: end; width: 100%; min-width: 0; }
+.language-switcher { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: var(--muted); font-size: 11px; line-height: 1; }
+.language-button { padding: 2px 0; border: 0; color: inherit; background: transparent; font-size: 11px; }
+.language-button:hover, .language-button.active { color: var(--plum); }
+.language-button.active { font-weight: 600; }
 .search-box { display: flex; align-items: center; gap: 9px; justify-self: end; width: 100%; min-height: 42px; padding: 8px 13px; border: 1px solid transparent; border-radius: 24px; background: var(--soft); transition: border-color .2s, background .2s; }
 .search-box:focus-within { border-color: #dfb9c3; background: #fff; }
 .search-icon { color: var(--plum); font: 25px/1 Georgia, serif; transform: rotate(-18deg); }
@@ -221,7 +226,9 @@ main { width: min(1320px, 100%); min-height: 65vh; margin: 0 auto; padding: 34px
   .identity img { width: 153px; }
   .identity-caption { font-size: 8px; letter-spacing: 1.5px; }
   .desktop-nav { display: none; }
-  .search-box { order: 3; flex-basis: 100%; width: 100%; min-height: 43px; }
+  .header-tools { order: 3; flex-basis: 100%; align-items: stretch; gap: 8px; }
+  .language-switcher { justify-content: flex-end; }
+  .search-box { width: 100%; min-height: 43px; }
   .search-box input { font-size: 15px; }
   main { min-height: 60vh; padding: 20px 18px 50px; }
   .hero { grid-template-columns: 1fr; min-height: 330px; margin-bottom: 30px; }
