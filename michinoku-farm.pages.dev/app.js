@@ -12,14 +12,14 @@
       description: 'みちのくファーム天然食材与犬用零食商品目录',
       brandSubtitle: '天然食材 · 犬用零食',
       navLabel: '主要导航',
+      catalogNav: '商品',
       languageLabel: '选择语言',
-      cart: '购物车',
+      cart: '心愿单',
       heroEyebrow: 'MICHINOKU FARM · PRODUCT CATALOG',
       heroTitleMain: '给日常，选一份',
       heroTitleEm: '天然的好零食。',
-      heroDescription: '天然食材与犬用零食，按类别浏览并整理喜欢的商品。',
       itemUnit: '件',
-      catalogEyebrow: 'BROWSE THE COLLECTION',
+      catalogEyebrow: 'MICHINOKU FARM / COLLECTION',
       catalogTitle: '商品目录',
       searchPlaceholder: '搜索商品、分类或规格',
       clearSearch: '清空搜索',
@@ -46,27 +46,30 @@
       priceMeta: '对应价格',
       chooseVariant: '选择规格 / 价格',
       outOfStock: '暂时缺货',
-      addToCart: '加入购物车',
+      addToCart: '加入心愿单',
       unavailable: '当前缺货',
-      cartEyebrow: 'MICHINOKU FARM · CART',
-      cartTitle: '我的购物车',
-      closeCart: '关闭购物车',
-      sharedCart: '这是朋友分享的购物车，保存后会写入本机。',
-      emptyCartTitle: '购物车还是空的',
-      emptyCartCopy: '看到喜欢的商品，就先放进这里吧。',
+      viewSource: '查看原站 ↗',
+      detailNote: '商品展示用参考信息，非实时售价。价格、库存和上下架状态以品牌官网为准；心愿单只保存在当前浏览器。',
+      cartEyebrow: 'MICHINOKU FARM · WISHLIST',
+      cartTitle: '我的心愿单',
+      cartStatus: (count, shared) => `${count} 件商品 · ${shared ? '朋友分享' : '保存在本机'} ♡`,
+      cartTotal: '合计参考价',
+      sharedCart: '这是朋友分享的心愿单，保存后会写入本机。',
+      emptyCartTitle: '心愿单还是空的',
+      emptyCartCopy: '看到喜欢的商品，就先放进心愿单吧。',
       browse: '去逛商品 ↗',
-      saveShared: '保存到我的购物车',
-      shareCart: '分享购物车',
+      saveShared: '保存到我的心愿单',
+      shareCart: '分享心愿单',
       clearCart: '清空',
       remove: '移出',
-      drawerNote: '购物车保存在当前浏览器。分享链接只包含商品与规格编号，不包含账号或支付信息。',
-      added: '已加入购物车',
-      alreadyAdded: '这个规格已经在购物车里',
-      cleared: '购物车已清空',
-      saved: '已保存到我的购物车',
-      sharedOpened: '已打开分享的购物车',
-      shareCopied: '购物车链接已复制',
-      sharePrompt: '复制这个购物车链接：',
+      drawerNote: '心愿单保存在当前浏览器。分享链接只包含商品与规格编号，不包含账号或支付信息。',
+      added: '已加入心愿单',
+      alreadyAdded: '这个规格已经在心愿单里',
+      cleared: '心愿单已清空',
+      saved: '已保存到我的心愿单',
+      sharedOpened: '已打开分享的心愿单',
+      shareCopied: '心愿单链接已复制',
+      sharePrompt: '复制这个心愿单链接：',
       noscript: '本商品目录需要启用 JavaScript 才能浏览。',
     },
     ja: {
@@ -75,14 +78,14 @@
       description: 'みちのくファームの天然食材・犬用おやつ商品一覧',
       brandSubtitle: '天然食材・犬用おやつ',
       navLabel: 'メインナビゲーション',
+      catalogNav: '商品',
       languageLabel: '言語を選択',
-      cart: 'カート',
+      cart: 'ウィッシュリスト',
       heroEyebrow: 'MICHINOKU FARM · PRODUCT CATALOG',
       heroTitleMain: 'いつもの毎日に、',
       heroTitleEm: '天然のおやつを。',
-      heroDescription: '天然食材と犬用おやつを、カテゴリから探して整理できます。',
       itemUnit: '件',
-      catalogEyebrow: 'BROWSE THE COLLECTION',
+      catalogEyebrow: 'MICHINOKU FARM / COLLECTION',
       catalogTitle: '商品一覧',
       searchPlaceholder: '商品名・カテゴリ・規格で検索',
       clearSearch: '検索をクリア',
@@ -109,27 +112,30 @@
       priceMeta: '価格',
       chooseVariant: '規格・価格を選択',
       outOfStock: '在庫切れ',
-      addToCart: 'カートに入れる',
+      addToCart: 'ウィッシュリストに入れる',
       unavailable: '在庫切れ',
-      cartEyebrow: 'MICHINOKU FARM · CART',
-      cartTitle: 'カート',
-      closeCart: 'カートを閉じる',
-      sharedCart: '共有されたカートです。保存するとこの端末に登録されます。',
-      emptyCartTitle: 'カートは空です',
+      viewSource: '公式サイトを見る ↗',
+      detailNote: '表示価格は参考情報で、リアルタイム価格ではありません。価格・在庫・販売状況は公式サイトをご確認ください。ウィッシュリストはこのブラウザ内に保存されます。',
+      cartEyebrow: 'MICHINOKU FARM · WISHLIST',
+      cartTitle: 'ウィッシュリスト',
+      cartStatus: (count, shared) => `${count} 件 · ${shared ? '共有ウィッシュリスト' : 'この端末に保存'} ♡`,
+      cartTotal: '参考合計',
+      sharedCart: '共有されたウィッシュリストです。保存するとこの端末に登録されます。',
+      emptyCartTitle: 'ウィッシュリストは空です',
       emptyCartCopy: '気になる商品を見つけたら、ここに入れておきましょう。',
       browse: '商品を見る ↗',
-      saveShared: 'マイカートに保存',
-      shareCart: 'カートを共有',
+      saveShared: 'マイウィッシュリストに保存',
+      shareCart: 'ウィッシュリストを共有',
       clearCart: 'クリア',
       remove: '削除',
-      drawerNote: 'カートはこのブラウザに保存されます。共有リンクには商品と規格の番号のみが含まれ、アカウント情報や決済情報は含まれません。',
-      added: 'カートに追加しました',
-      alreadyAdded: 'この規格はすでにカートに入っています',
-      cleared: 'カートをクリアしました',
-      saved: 'マイカートに保存しました',
-      sharedOpened: '共有されたカートを開きました',
-      shareCopied: 'カートのリンクをコピーしました',
-      sharePrompt: 'このカートリンクをコピーしてください：',
+      drawerNote: 'ウィッシュリストはこのブラウザに保存されます。共有リンクには商品と規格の番号のみが含まれ、アカウント情報や決済情報は含まれません。',
+      added: 'ウィッシュリストに追加しました',
+      alreadyAdded: 'この規格はすでにウィッシュリストに入っています',
+      cleared: 'ウィッシュリストをクリアしました',
+      saved: 'マイウィッシュリストに保存しました',
+      sharedOpened: '共有されたウィッシュリストを開きました',
+      shareCopied: 'ウィッシュリストのリンクをコピーしました',
+      sharePrompt: 'このウィッシュリストリンクをコピーしてください：',
       noscript: 'この商品一覧を表示するには JavaScript を有効にしてください。',
     },
   };
@@ -143,10 +149,14 @@
     detailVariantId: null,
     cart: [],
     sharedCart: false,
+    cartPage: false,
   };
   let toastTimer;
 
-  const asset = (path) => String(path || '').replace(/^\/?assets\//, 'assets/');
+  const asset = (path) => {
+    const normalized = String(path || '').replace(/^\/?assets\//, 'assets/');
+    return normalized.startsWith('assets/') ? `${normalized}?v=20260918` : normalized;
+  };
   const escapeHtml = (value) => String(value == null ? '' : value)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -243,11 +253,14 @@
     $('.top-nav').setAttribute('aria-label', t.navLabel);
     $('.language-switch').setAttribute('aria-label', t.languageLabel);
     $('#brand-subtitle').textContent = t.brandSubtitle;
+    $('#catalog-nav-label').textContent = t.catalogNav;
+    $('#catalog-nav-count').textContent = String(data.productCount);
     $('#cart-label').textContent = t.cart;
+    $('#catalog-nav').classList.toggle('active', !state.cartPage);
+    $('#cart-toggle').classList.toggle('active', state.cartPage);
     $('#hero-eyebrow').textContent = t.heroEyebrow;
     $('#hero-title-main').textContent = t.heroTitleMain;
     $('#hero-title-em').textContent = t.heroTitleEm;
-    $('#hero-description').textContent = t.heroDescription;
     $('#product-count').textContent = `${data.productCount} ${t.itemUnit}${state.language === 'ja' ? '' : '商品'}`;
     $('#catalog-eyebrow').textContent = t.catalogEyebrow;
     $('#catalog-title').textContent = t.catalogTitle;
@@ -266,8 +279,6 @@
     $('#modal-close').setAttribute('aria-label', t.modalClose);
     $('#cart-eyebrow').textContent = t.cartEyebrow;
     $('#cart-title').textContent = t.cartTitle;
-    $('#cart-close').setAttribute('aria-label', t.closeCart);
-    $('#shared-cart-note').textContent = t.sharedCart;
     $('#cart-empty-title').textContent = t.emptyCartTitle;
     $('#cart-empty-copy').textContent = t.emptyCartCopy;
     $('#cart-empty-close').textContent = t.browse;
@@ -285,10 +296,13 @@
   function renderCategories() {
     const t = current();
     const items = [{ id: 'all', label: t.allLabel, name: t.allSub }].concat(data.categories);
+    const countFor = (id) => id === 'all'
+      ? data.productCount
+      : data.products.filter((product) => product.categories.includes(String(id))).length;
     $('#category-strip').innerHTML = items.map((category) => `
       <button class="category-chip ${state.category === category.id ? 'active' : ''}" type="button" data-category="${escapeHtml(category.id)}" role="listitem">
-        <strong>${escapeHtml(category.id === 'all' ? category.label : categoryLabel(category))}</strong>
-        <span>${escapeHtml(category.id === 'all' ? category.name : categorySecondary(category))}</span>
+        <span class="category-text"><strong>${escapeHtml(category.id === 'all' ? category.label : categoryLabel(category))}</strong><span class="category-secondary">${escapeHtml(category.id === 'all' ? category.name : categorySecondary(category))}</span></span>
+        <span class="category-count">${countFor(category.id)}</span>
       </button>
     `).join('');
   }
@@ -320,7 +334,7 @@
           <div class="product-info">
             <div class="product-category">${escapeHtml(categoryLabel(categoryById(product.categories[0])))}</div>
             <h3 class="product-name">${escapeHtml(product.name)}</h3>
-            <div class="product-price"><span>${escapeHtml(product.priceLabel)}</span><small>${escapeHtml(state.language === 'ja' ? 'JPY〜' : product.priceUnit)}</small></div>
+            <div class="product-price"><span>${escapeHtml(product.priceLabel)}</span><small>${escapeHtml(state.language === 'ja' ? 'RMB〜' : product.priceUnit)}</small></div>
             <div class="product-stock ${inStock ? '' : 'unavailable'}">${escapeHtml(stockText)}</div>
           </div>
         </button>
@@ -348,34 +362,51 @@
       return product && variant ? { entry, product, variant } : null;
     }).filter(Boolean);
     state.cart = entries.map(({ entry }) => entry);
+    const total = entries.reduce((sum, { variant }) => sum + (Number(variant.price) || 0), 0);
     $('#cart-count').textContent = String(entries.length);
     $('#cart-items').innerHTML = entries.map(({ entry, product, variant }) => `
-      <div class="cart-item">
-        <img src="${escapeHtml(asset(product.image))}" alt="${escapeHtml(product.name)}" loading="lazy" />
-        <div>
-          <h3>${escapeHtml(product.name)}</h3>
-          <p>${escapeHtml(variant.name)}</p>
-          <p>${escapeHtml(variant.priceText)}</p>
+      <article class="cart-item">
+        <a class="cart-thumb" href="./?product=${encodeURIComponent(product.id)}">
+          <img src="${escapeHtml(asset(product.image))}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async" />
+        </a>
+        <div class="cart-info">
+          <p class="product-category">${escapeHtml(categoryLabel(categoryById(product.categories[0])))}</p>
+          <h2>${escapeHtml(product.name)}</h2>
+          <p class="cart-variant">${escapeHtml(variant.name)}</p>
+          <p class="cart-price">${escapeHtml(variant.priceText)}</p>
         </div>
-        <button class="remove-item" type="button" data-remove-cart="${escapeHtml(entry.productId)}:${escapeHtml(entry.variantId)}">${escapeHtml(t.remove)}</button>
-      </div>
+        <button class="remove-button" type="button" data-remove-cart="${escapeHtml(entry.productId)}:${escapeHtml(entry.variantId)}">${escapeHtml(t.remove)}</button>
+      </article>
     `).join('');
+    $('#cart-status').textContent = t.cartStatus(entries.length, state.sharedCart);
     $('#cart-empty').hidden = entries.length > 0;
     $('#cart-actions').hidden = entries.length === 0;
     $('#save-shared-cart').hidden = !state.sharedCart;
-    $('#shared-cart-note').hidden = !state.sharedCart;
+    $('#cart-total').hidden = entries.length === 0;
+    $('#cart-total-value').textContent = total ? `¥ ${total.toLocaleString('en-US')}` : '¥ 0';
   }
 
-  function openCart() {
-    $('#cart-drawer').classList.add('open');
-    $('#cart-drawer').setAttribute('aria-hidden', 'false');
+  function openCartPage(push = true) {
+    if (state.detailId) closeProduct(false);
+    state.cartPage = true;
+    $('#cart-page').hidden = false;
+    document.body.classList.add('cart-page-active');
+    $('#catalog-nav').classList.remove('active');
+    $('#cart-toggle').classList.add('active');
     $('#cart-toggle').setAttribute('aria-expanded', 'true');
+    renderCart();
+    window.scrollTo(0, 0);
+    if (push) updateUrl({ view: 'cart', product: null }, false);
   }
 
-  function closeCart() {
-    $('#cart-drawer').classList.remove('open');
-    $('#cart-drawer').setAttribute('aria-hidden', 'true');
+  function closeCartPage(push = true) {
+    state.cartPage = false;
+    $('#cart-page').hidden = true;
+    document.body.classList.remove('cart-page-active');
+    $('#catalog-nav').classList.add('active');
+    $('#cart-toggle').classList.remove('active');
     $('#cart-toggle').setAttribute('aria-expanded', 'false');
+    if (push) updateUrl({ view: null }, false);
   }
 
   function openProduct(productId, push) {
@@ -412,7 +443,7 @@
         <div class="detail-copy">
           <p class="eyebrow">${escapeHtml(t.detailEyebrow)} · ${escapeHtml(category)}</p>
           <h2 id="detail-title">${escapeHtml(product.name)}</h2>
-          <div class="detail-price">${escapeHtml(variant.priceLabel)} <small>JPY</small></div>
+          <div class="detail-price">${escapeHtml(variant.priceLabel)} <small>RMB</small></div>
           <div class="detail-metadata">
             <div class="metadata-row"><span>${escapeHtml(t.categoryMeta)}</span><span>${escapeHtml(category)}</span></div>
             <div class="metadata-row"><span>${escapeHtml(t.currentVariantMeta)}</span><span>${escapeHtml(variant.name)}</span></div>
@@ -432,7 +463,9 @@
           ` : ''}
           <div class="detail-actions">
             <button class="button primary-button" type="button" data-add-detail ${available ? '' : 'disabled'}>${escapeHtml(available ? t.addToCart : t.unavailable)}</button>
+            <a class="text-link" href="${escapeHtml(product.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(t.viewSource)}</a>
           </div>
+          <p class="detail-note">${escapeHtml(t.detailNote)}</p>
         </div>
       </div>
     `;
@@ -468,8 +501,15 @@
     renderProducts();
     renderCart();
     const productId = params.get('product');
-    if (productId) openProduct(productId, false);
-    else if (state.detailId) closeProduct(false);
+    if (productId) {
+      closeCartPage(false);
+      openProduct(productId, false);
+    } else if (params.get('view') === 'cart') {
+      openCartPage(false);
+    } else {
+      closeCartPage(false);
+      if (state.detailId) closeProduct(false);
+    }
   }
 
   function setLanguage(language) {
@@ -489,6 +529,7 @@
     if (!state.cart.length) return;
     const url = new URL(window.location.href);
     url.search = '';
+    url.searchParams.set('view', 'cart');
     url.searchParams.set('cart', formatCartParam(state.cart));
     url.searchParams.set('lang', state.language);
     const shareUrl = url.toString();
@@ -561,9 +602,11 @@
     renderCategories();
     renderProducts();
   });
-  $('#cart-toggle').addEventListener('click', openCart);
-  $('#cart-close').addEventListener('click', closeCart);
-  $('#cart-empty-close').addEventListener('click', closeCart);
+  $('#cart-toggle').addEventListener('click', () => {
+    if (state.cartPage) closeCartPage();
+    else openCartPage();
+  });
+  $('#cart-empty-close').addEventListener('click', closeCartPage);
   $('#modal-close').addEventListener('click', () => closeProduct(true));
   $('#modal-backdrop').addEventListener('click', () => closeProduct(true));
   $('#clear-cart').addEventListener('click', () => {
@@ -585,7 +628,7 @@
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       if (state.detailId) closeProduct(true);
-      else closeCart();
+      else if (state.cartPage) closeCartPage();
     }
   });
   window.addEventListener('popstate', syncFromUrl);
