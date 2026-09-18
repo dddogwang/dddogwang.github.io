@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3e2a23">
+  <meta name="description" content="WAN VOYAGE 2026 Autumn & Winter · 设计师犬服与宠物用品目录。">
+  <title>WAN VOYAGE · 2026 Autumn &amp; Winter</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="announcement">
+    <span id="announcementTitle">WAN VOYAGE · 2026 AUTUMN &amp; WINTER</span>
+  </div>
+
+  <header class="site-header">
+    <a class="identity" href="#/products" aria-label="WAN VOYAGE 商品目录首页">
+      <img id="brandLogo" src="assets/wan-voyage-logo-cropped.png" alt="WAN VOYAGE">
+      <span class="identity-caption" id="identityCaption">DESIGNER'S DOGWARE SELECT SHOP</span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="主导航">
+      <a href="#/products" data-nav="products"><span id="desktopCatalogLabel">目录</span> <small id="catalogCount"></small></a>
+      <a href="#/cart" data-nav="cart"><span id="desktopSavedLabel">收藏夹</span> <b class="cart-count" data-cart-count hidden>0</b></a>
+    </nav>
+
+    <div class="header-actions">
+      <div class="language-switch" id="languageSwitch" role="group" aria-label="Language">
+        <button type="button" data-language="zh" aria-pressed="true">中文</button>
+        <span>/</span>
+        <button type="button" data-language="ja" aria-pressed="false">日本語原版</button>
+      </div>
+      <label class="search-box">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" autocomplete="off" placeholder="搜索商品、品牌、规格或编号" aria-label="搜索商品、品牌、规格或编号">
+        <button id="clearSearch" type="button" aria-label="清空搜索" hidden>×</button>
+      </label>
+    </div>
+  </header>
+
+  <main id="app" aria-live="polite"></main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <img src="assets/wan-voyage-logo-cropped.png" alt="WAN VOYAGE">
+      <p id="footerNote">Designer’s Dogware Select Shop</p>
+    </div>
+    <div class="footer-meta">
+      <span>2026 Autumn &amp; Winter · <span id="footerProductCount">92</span> items</span>
+    </div>
+  </footer>
+
+  <nav class="mobile-nav" aria-label="移动端导航">
+    <a href="#/products" data-nav="products"><span class="nav-symbol">✦</span><em id="mobileCatalogLabel">目录</em><small id="mobileCatalogCount"></small></a>
+    <a href="#/cart" data-nav="cart"><span class="nav-symbol">♡</span><em id="mobileSavedLabel">收藏夹</em><b class="cart-count" data-cart-count hidden>0</b></a>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
