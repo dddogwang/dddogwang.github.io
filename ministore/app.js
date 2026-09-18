@@ -35,6 +35,7 @@ const numberFormat = new Intl.NumberFormat('zh-CN');
 const productGrid = document.querySelector('#productGrid');
 const refreshButton = document.querySelector('#refreshProducts');
 const totalProductsNode = document.querySelector('[data-total-products]');
+const totalBrandsNode = document.querySelector('[data-total-brands]');
 const header = document.querySelector('.site-header');
 const menuButton = document.querySelector('.menu-button');
 let loadedStores = [];
@@ -182,6 +183,9 @@ async function init() {
   const total = loadedStores.reduce((sum, store) => sum + store.products.length, 0);
   if (totalProductsNode) {
     totalProductsNode.textContent = numberFormat.format(total);
+  }
+  if (totalBrandsNode) {
+    totalBrandsNode.textContent = String(loadedStores.length).padStart(2, '0');
   }
 
   if (!loadedStores.length) {
