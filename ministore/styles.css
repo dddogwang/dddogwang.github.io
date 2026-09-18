@@ -410,9 +410,10 @@ h2 em {
   right: 2%;
   width: 36%;
   height: 25%;
-  padding: 12px;
+  padding: 9px;
   transform: rotate(5deg);
-  background: #ecd2d8;
+  background: #fffdfa;
+  box-shadow: 12px 15px 0 rgba(56, 44, 42, 0.1);
 }
 
 .hero-photo-paw img {
