@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 112" role="img" aria-labelledby="title desc">
+  <title id="title">绒爪选物</title>
+  <desc id="desc">PAW ATELIER</desc>
+  <rect width="360" height="112" rx="22" fill="#fffaf7"/>
+  <g transform="translate(20 17)" fill="none" stroke="#815365" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M38 58c-18 0-29-9-29-22 0-9 7-16 16-16 7 0 12 4 16 10 4-6 9-10 16-10 9 0 16 7 16 16 0 13-11 22-29 22Z" fill="#f0c7cf"/>
+    <ellipse cx="24" cy="12" rx="10" ry="13" fill="#f0c7cf"/>
+    <ellipse cx="52" cy="12" rx="10" ry="13" fill="#f0c7cf"/>
+  </g>
+  <text x="112" y="53" fill="#4b3540" font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans CJK SC',sans-serif" font-size="29" font-weight="600" letter-spacing="2">绒爪选物</text>
+  <text x="114" y="80" fill="#977c87" font-family="Georgia,serif" font-size="12" letter-spacing="3">PAW ATELIER</text>
+</svg>
