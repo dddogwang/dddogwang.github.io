@@ -12,18 +12,15 @@
       description: 'みちのくファーム天然食材与犬用零食商品目录',
       brandSubtitle: '天然食材 · 犬用零食',
       navLabel: '主要导航',
-      official: '品牌官网 ↗',
       languageLabel: '选择语言',
       cart: '购物车',
       heroEyebrow: 'MICHINOKU FARM · PRODUCT CATALOG',
       heroTitleMain: '给日常，选一份',
       heroTitleEm: '天然的好零食。',
-      heroDescription: '来自日本みちのくファーム的天然食材与犬用零食目录。当前页面为本地静态快照，方便浏览与整理心愿清单。',
-      snapshotPrefix: '抓取于',
+      heroDescription: '天然食材与犬用零食，按类别浏览并整理喜欢的商品。',
       itemUnit: '件',
       catalogEyebrow: 'BROWSE THE COLLECTION',
       catalogTitle: '商品目录',
-      catalogNote: '日元参考价 · 以品牌官网为准',
       searchPlaceholder: '搜索商品、分类或规格',
       clearSearch: '清空搜索',
       sortLabel: '排序',
@@ -42,8 +39,6 @@
       emptyTitle: '没有找到相关商品',
       emptyCopy: '换个关键词，或返回全部商品继续浏览。',
       resetFilters: '清除筛选',
-      footerSnapshot: (date) => `商品、价格、库存和上下架状态来自 ${date} 的本地静态快照。`,
-      footerNote: (url) => `仅作商品目录与购物车整理使用，完整信息请以 <a href="${url}" target="_blank" rel="noreferrer">品牌官网</a> 为准。`,
       modalClose: '关闭商品详情',
       detailEyebrow: 'MICHINOKU FARM',
       categoryMeta: '分类',
@@ -53,8 +48,6 @@
       outOfStock: '暂时缺货',
       addToCart: '加入购物车',
       unavailable: '当前缺货',
-      viewSource: '查看原站 ↗',
-      detailNote: '商品展示用参考信息，非实时售价。价格、库存和上下架状态以品牌官网为准；购物车只保存在当前浏览器。',
       cartEyebrow: 'MICHINOKU FARM · CART',
       cartTitle: '我的购物车',
       closeCart: '关闭购物车',
@@ -82,18 +75,15 @@
       description: 'みちのくファームの天然食材・犬用おやつ商品一覧',
       brandSubtitle: '天然食材・犬用おやつ',
       navLabel: 'メインナビゲーション',
-      official: '公式サイト ↗',
       languageLabel: '言語を選択',
       cart: 'カート',
       heroEyebrow: 'MICHINOKU FARM · PRODUCT CATALOG',
       heroTitleMain: 'いつもの毎日に、',
       heroTitleEm: '天然のおやつを。',
-      heroDescription: '日本のみちのくファームが届ける、天然食材と犬用おやつの商品一覧です。現在のページは、商品を探してお気に入りを整理するための静的スナップショットです。',
-      snapshotPrefix: '取得日',
+      heroDescription: '天然食材と犬用おやつを、カテゴリから探して整理できます。',
       itemUnit: '件',
       catalogEyebrow: 'BROWSE THE COLLECTION',
       catalogTitle: '商品一覧',
-      catalogNote: '参考価格は日本円 · 詳細は公式サイトをご確認ください',
       searchPlaceholder: '商品名・カテゴリ・規格で検索',
       clearSearch: '検索をクリア',
       sortLabel: '並び順',
@@ -112,8 +102,6 @@
       emptyTitle: '商品が見つかりません',
       emptyCopy: 'キーワードを変えるか、すべての商品に戻ってご覧ください。',
       resetFilters: '絞り込みを解除',
-      footerSnapshot: (date) => `商品・価格・在庫・販売状況は ${date} 時点の静的スナップショットです。`,
-      footerNote: (url) => `商品一覧とカート整理のためのページです。最新情報は <a href="${url}" target="_blank" rel="noreferrer">公式サイト</a> をご確認ください。`,
       modalClose: '商品詳細を閉じる',
       detailEyebrow: 'MICHINOKU FARM',
       categoryMeta: 'カテゴリ',
@@ -123,8 +111,6 @@
       outOfStock: '在庫切れ',
       addToCart: 'カートに入れる',
       unavailable: '在庫切れ',
-      viewSource: '公式サイトを見る ↗',
-      detailNote: '表示価格は参考情報で、リアルタイム価格ではありません。価格・在庫・販売状況は公式サイトをご確認ください。カートはこのブラウザ内に保存されます。',
       cartEyebrow: 'MICHINOKU FARM · CART',
       cartTitle: 'カート',
       closeCart: 'カートを閉じる',
@@ -257,17 +243,14 @@
     $('.top-nav').setAttribute('aria-label', t.navLabel);
     $('.language-switch').setAttribute('aria-label', t.languageLabel);
     $('#brand-subtitle').textContent = t.brandSubtitle;
-    $('#official-link').textContent = t.official;
     $('#cart-label').textContent = t.cart;
     $('#hero-eyebrow').textContent = t.heroEyebrow;
     $('#hero-title-main').textContent = t.heroTitleMain;
     $('#hero-title-em').textContent = t.heroTitleEm;
     $('#hero-description').textContent = t.heroDescription;
     $('#product-count').textContent = `${data.productCount} ${t.itemUnit}${state.language === 'ja' ? '' : '商品'}`;
-    $('#snapshot-meta').textContent = `${t.snapshotPrefix} ${data.snapshotDate}`;
     $('#catalog-eyebrow').textContent = t.catalogEyebrow;
     $('#catalog-title').textContent = t.catalogTitle;
-    $('#catalog-note').textContent = t.catalogNote;
     $('#search-input').placeholder = t.searchPlaceholder;
     $('#search-input').setAttribute('aria-label', t.searchPlaceholder);
     $('#clear-search').setAttribute('aria-label', t.clearSearch);
@@ -280,8 +263,6 @@
     $('#empty-title').textContent = t.emptyTitle;
     $('#empty-copy').textContent = t.emptyCopy;
     $('#reset-filters').textContent = t.resetFilters;
-    $('#footer-snapshot').textContent = t.footerSnapshot(data.snapshotDate);
-    $('#footer-note').innerHTML = t.footerNote(escapeHtml(data.brand.sourceUrl));
     $('#modal-close').setAttribute('aria-label', t.modalClose);
     $('#cart-eyebrow').textContent = t.cartEyebrow;
     $('#cart-title').textContent = t.cartTitle;
@@ -451,9 +432,7 @@
           ` : ''}
           <div class="detail-actions">
             <button class="button primary-button" type="button" data-add-detail ${available ? '' : 'disabled'}>${escapeHtml(available ? t.addToCart : t.unavailable)}</button>
-            <a class="text-link" href="${escapeHtml(product.sourceUrl)}" target="_blank" rel="noreferrer">${escapeHtml(t.viewSource)}</a>
           </div>
-          <p class="detail-note">${escapeHtml(t.detailNote)}</p>
         </div>
       </div>
     `;

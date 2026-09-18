@@ -63,7 +63,6 @@ h1 em { color: var(--plum); font-style: normal; }
 .catalog-section { border-top: 1px solid var(--line); padding: 72px 0 80px; }
 .catalog-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
 h2 { margin: 12px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 42px; font-weight: 400; letter-spacing: -.04em; }
-.catalog-note { color: var(--muted); font-size: 12px; }
 .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 42px 0 24px; }
 .search-box { display: flex; align-items: center; width: min(100%, 540px); min-height: 48px; padding: 0 16px; border-radius: 28px; background: var(--paper-deep); color: var(--muted); }
 .search-box > span { margin-right: 11px; font-size: 25px; line-height: 1; }
