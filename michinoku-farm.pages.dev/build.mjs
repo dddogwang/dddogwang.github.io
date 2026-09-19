@@ -45,6 +45,13 @@ const priceText = (value) => value == null ? '价格请见原站' : `¥ ${format
 const sourceBrand = rawCatalog.find((brand) => brand.id === 'michi');
 if (!sourceBrand) throw new Error('michi brand was not found in the current catalog');
 
+const excludedProductIds = new Set([
+  'michi-1880275',
+  'michi-1211009',
+  'michi-1518349',
+  'michi-1523978',
+]);
+
 const categories = sourceBrand.categories.map((category) => ({
   id: String(category.id),
   name: category.name,
@@ -53,7 +60,7 @@ const categories = sourceBrand.categories.map((category) => ({
   paused: String(category.name).includes('販売休止'),
 }));
 
-const products = sourceBrand.products.map((product) => {
+const products = sourceBrand.products.filter((product) => !excludedProductIds.has(String(product.id))).map((product) => {
   const nameZh = productNamesZh[String(product.id)];
   if (!nameZh) throw new Error(`Chinese product name is missing for ${product.id}`);
   const variants = (Array.isArray(product.variants) && product.variants.length ? product.variants : [{
