@@ -225,6 +225,28 @@ const assetPath = value => {
   return path.startsWith('/') ? `.${path}` : path;
 };
 
+const pawNameReplacements = [
+  ['プレゼントに最適！', '非常适合作为礼物！'],
+  ['＜配送オプション＞', '＜配送选项＞'],
+  ['お急ぎ便：2点まで', '加急配送：限2件'],
+  ['左利きの方◇', '左撇子◇'],
+  ['プラバレッタの向きを変更', '调整塑料发夹方向'],
+  ['翌日発送', '次日发货'],
+  ['やわらかミニゴム', '柔软迷你发圈'],
+  ['クリアミニゴム', '透明迷你发圈'],
+  ['ミニゴム', '迷你发圈'],
+  ['プラバレッタ', '塑料发夹'],
+  ['カートチャーム', '宠物车挂饰'],
+  ['ベルト', '项圈'],
+];
+
+function displayProductName(product) {
+  const sourceName = String(product?.name || '');
+  if (state.language === 'ja') return sourceName;
+  if (product?.nameZh) return String(product.nameZh);
+  return pawNameReplacements.reduce((name, [source, translated]) => name.replaceAll(source, translated), sourceName);
+}
+
 const baseCategoryName = name => String(name || '').split('：')[0].trim();
 
 function ui(key, ...args) {
@@ -392,7 +414,7 @@ function cartProducts(entries = state.cartEntries) {
   return dedupeEntries(entries).map(entry => {
     const product = state.productMap.get(entry.productId);
     const variant = getProductVariants(product).find(item => String(item.id) === String(entry.variantId)) || getDefaultVariant(product);
-    return { ...product, variant, cartKey: entryKey(entry), variantName: variant?.name || ui('defaultVariant') };
+    return { ...product, name: displayProductName(product), variant, cartKey: entryKey(entry), variantName: variant?.name || ui('defaultVariant') };
   }).filter(item => item.variant);
 }
 
@@ -487,7 +509,7 @@ function matchesQuery(product) {
   if (!state.query) return true;
   const categoryText = getProductCategories(product).flatMap(category => [categoryLabel(category), category.name]).join(' ');
   const variants = getProductVariants(product).map(variant => variant.name).join(' ');
-  return `${product.name} ${categoryText} ${variants} ${product.id}`.toLowerCase().includes(state.query.toLowerCase());
+  return `${displayProductName(product)} ${product.name} ${categoryText} ${variants} ${product.id}`.toLowerCase().includes(state.query.toLowerCase());
 }
 
 function filteredProducts() {
@@ -506,7 +528,8 @@ function productCard(product) {
   const category = primaryCategory(product);
   const variants = getProductVariants(product);
   const hasAvailable = variants.some(isVariantAvailable);
-  return `<article class="product-card"><a class="product-link" href="#/product/${encodeURIComponent(product.id)}" aria-label="${escapeHtml(ui('viewProduct', product.name))}"><div class="product-image"><img src="${escapeHtml(assetPath(product.image))}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async"><span class="image-mark ${hasAvailable ? '' : 'sold'}">${hasAvailable ? STORE_ENGLISH : ui('soldOut')}</span></div><div class="product-info"><p class="product-category">${escapeHtml(categoryLabel(category))}</p><h2>${escapeHtml(product.name)}</h2><div class="product-meta"><span class="product-price">${escapeHtml(priceRange(product))}<small>RMB</small></span><span class="variant-count">${variants.length > 1 ? ui('variantCount', variants.length) : ui('singleVariant')}</span></div></div></a></article>`;
+  const name = displayProductName(product);
+  return `<article class="product-card"><a class="product-link" href="#/product/${encodeURIComponent(product.id)}" aria-label="${escapeHtml(ui('viewProduct', name))}"><div class="product-image"><img src="${escapeHtml(assetPath(product.image))}" alt="${escapeHtml(name)}" loading="lazy" decoding="async"><span class="image-mark ${hasAvailable ? '' : 'sold'}">${hasAvailable ? STORE_ENGLISH : ui('soldOut')}</span></div><div class="product-info"><p class="product-category">${escapeHtml(categoryLabel(category))}</p><h2>${escapeHtml(name)}</h2><div class="product-meta"><span class="product-price">${escapeHtml(priceRange(product))}<small>RMB</small></span><span class="variant-count">${variants.length > 1 ? ui('variantCount', variants.length) : ui('singleVariant')}</span></div></div></a></article>`;
 }
 
 function renderProductsPage() {
@@ -533,8 +556,9 @@ function renderDetailPage(product) {
   const hasAvailable = variants.some(isVariantAvailable);
   const inCart = state.cartEntries.some(entry => entry.productId === product.id && String(entry.variantId) === String(selected?.id));
   const categories = getProductCategories(product);
+  const name = displayProductName(product);
   const variantOptions = variants.length > 1 ? `<fieldset class="variant-fieldset"><legend>${escapeHtml(ui('variantLegend'))}</legend><div class="variant-list">${variants.map(variant => `<label class="variant-option ${String(variant.id) === String(selected?.id) ? 'selected' : ''} ${isVariantAvailable(variant) ? '' : 'unavailable'}"><input type="radio" name="variant" value="${escapeHtml(variant.id)}" ${String(variant.id) === String(selected?.id) ? 'checked' : ''} ${isVariantAvailable(variant) ? '' : 'disabled'}><span class="variant-name">${escapeHtml(variant.name || ui('defaultVariant'))}</span><span class="variant-price">${escapeHtml(variant.priceText || formatVariantPrice(variant))}</span>${isVariantAvailable(variant) ? '' : `<span class="variant-stock">${escapeHtml(ui('variantStock'))}</span>`}</label>`).join('')}</div></fieldset>` : '';
-  app.innerHTML = `<div class="detail-page"><div class="breadcrumb"><a href="#/products">${escapeHtml(ui('detailBreadcrumb'))}</a><span>/</span><span>${escapeHtml(categories.map(category => categoryLabel(category)).join(' / '))}</span><span>/</span><span>${escapeHtml(product.name)}</span></div><div class="detail-layout"><div class="detail-media"><img src="${escapeHtml(assetPath(product.image))}" alt="${escapeHtml(product.name)}"><span class="image-mark ${hasAvailable ? '' : 'sold'}">${hasAvailable ? STORE_ENGLISH : ui('soldOut')}</span></div><div class="detail-copy"><a class="back-link" href="#/products">${escapeHtml(ui('detailBack'))}</a><span class="eyebrow">${escapeHtml(STORE_ENGLISH)} / ${escapeHtml(categoryLabel(categories[0]))}</span><h1>${escapeHtml(product.name)}</h1><p class="detail-price">${escapeHtml(formatVariantPrice(selected))}<small>${escapeHtml(ui('priceReference'))}</small></p><div class="detail-divider"></div>${variantOptions}<dl class="detail-facts"><div class="detail-fact"><dt>${escapeHtml(ui('currentVariant'))}</dt><dd>${escapeHtml(selected?.name || ui('defaultVariant'))}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('productCode'))}</dt><dd>${escapeHtml(selected?.itemCode || product.id)}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('productCategory'))}</dt><dd>${escapeHtml(categories.map(category => categoryLabel(category)).join(' / '))}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('source'))}</dt><dd>${escapeHtml(state.catalog.brand.sourceBrand || ui('sourceFallback'))}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('status'))}</dt><dd>${escapeHtml(isVariantAvailable(selected) ? ui('available') : ui('unavailable'))}</dd></div></dl><button class="add-button" type="button" id="detailAdd" ${!isVariantAvailable(selected) || inCart ? 'disabled' : ''}>${escapeHtml(inCart ? ui('inCart') : ui('addToCart'))}</button><p class="detail-note">${escapeHtml(ui('detailNote'))}</p></div></div></div>`;
+  app.innerHTML = `<div class="detail-page"><div class="breadcrumb"><a href="#/products">${escapeHtml(ui('detailBreadcrumb'))}</a><span>/</span><span>${escapeHtml(categories.map(category => categoryLabel(category)).join(' / '))}</span><span>/</span><span>${escapeHtml(name)}</span></div><div class="detail-layout"><div class="detail-media"><img src="${escapeHtml(assetPath(product.image))}" alt="${escapeHtml(name)}"><span class="image-mark ${hasAvailable ? '' : 'sold'}">${hasAvailable ? STORE_ENGLISH : ui('soldOut')}</span></div><div class="detail-copy"><a class="back-link" href="#/products">${escapeHtml(ui('detailBack'))}</a><span class="eyebrow">${escapeHtml(STORE_ENGLISH)} / ${escapeHtml(categoryLabel(categories[0]))}</span><h1>${escapeHtml(name)}</h1><p class="detail-price">${escapeHtml(formatVariantPrice(selected))}<small>${escapeHtml(ui('priceReference'))}</small></p><div class="detail-divider"></div>${variantOptions}<dl class="detail-facts"><div class="detail-fact"><dt>${escapeHtml(ui('currentVariant'))}</dt><dd>${escapeHtml(selected?.name || ui('defaultVariant'))}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('productCode'))}</dt><dd>${escapeHtml(selected?.itemCode || product.id)}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('productCategory'))}</dt><dd>${escapeHtml(categories.map(category => categoryLabel(category)).join(' / '))}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('source'))}</dt><dd>${escapeHtml(state.catalog.brand.sourceBrand || ui('sourceFallback'))}</dd></div><div class="detail-fact"><dt>${escapeHtml(ui('status'))}</dt><dd>${escapeHtml(isVariantAvailable(selected) ? ui('available') : ui('unavailable'))}</dd></div></dl><button class="add-button" type="button" id="detailAdd" ${!isVariantAvailable(selected) || inCart ? 'disabled' : ''}>${escapeHtml(inCart ? ui('inCart') : ui('addToCart'))}</button><p class="detail-note">${escapeHtml(ui('detailNote'))}</p></div></div></div>`;
   document.querySelectorAll('input[name="variant"]').forEach(input => input.addEventListener('change', event => {
     state.selectedVariants.set(product.id, event.target.value);
     renderDetailPage(product);
