@@ -1,0 +1,15 @@
+{
+  "cross-day-embeddings.png": {
+    "source": "https://arxiv.org/html/2610.36408v1/Figure1.svg",
+    "description": "Published Figure 1, rasterized and resized without content changes"
+  },
+  "epigenetic-profiling.png": {
+    "source": "https://media.springernature.com/lw685/springer-static/image/art%3A10.1186%2Fs13072-026-00662-5/MediaObjects/13072_2026_662_Fig1_HTML.png",
+    "description": "Published Figure 1, original colors"
+  },
+  "maholosuite-platform.png": {
+    "source": "Maholo/figures/paper_main/fig1_platform.png",
+    "manuscript": "Maholo/maholo_paper/manuscript/latex/main.tex",
+    "description": "Draft platform overview, resized; planned validation is not completed evidence"
+  }
+}
